@@ -1,0 +1,9 @@
+services:
+  - type: web
+    name: analyst-pro
+    runtime: python
+    buildCommand: pip install --upgrade pip
+    startCommand: python app.py
+    envVars:
+      - key: ANTHROPIC_API_KEY
+        sync: false

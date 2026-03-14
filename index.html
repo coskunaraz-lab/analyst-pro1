@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Analyst Pro</title>
+<link href="https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=Playfair+Display:wght@400;600&family=DM+Sans:wght@300;400;500&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0a0a0b;--bg2:#111113;--bg3:#18181c;--bg4:#1f1f25;--border:rgba(255,255,255,0.07);--border2:rgba(255,255,255,0.13);--text:#f0ede8;--muted:#5a5a64;--muted2:#9494a2;--gold:#c9a84c;--gold2:#e8c97a;--gold3:rgba(201,168,76,0.1);--green:#3fb87f;--green2:rgba(63,184,127,0.1);--red:#e05555;--red2:rgba(224,85,85,0.09);--blue:#4a9eff;--blue2:rgba(74,158,255,0.09)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'DM Sans',sans-serif;min-height:100vh;display:flex}
+.sidebar{width:228px;background:var(--bg2);border-right:1px solid var(--border);display:flex;flex-direction:column;position:fixed;top:0;left:0;height:100vh;z-index:20;overflow-y:auto}
+.logo{padding:1.4rem 1.25rem 1rem;border-bottom:1px solid var(--border)}
+.logo-mark{font-family:'Playfair Display',serif;font-size:18px;color:var(--gold2)}
+.logo-sub{font-size:10px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;margin-top:3px}
+.nav{padding:.6rem 0;flex:1}
+.nav-grp{font-size:9.5px;color:var(--muted);letter-spacing:1.8px;text-transform:uppercase;padding:.6rem 1.2rem .3rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:.55rem 1rem;cursor:pointer;font-size:13px;color:var(--muted2);transition:all .15s;border-left:2px solid transparent}
+.nav-item:hover{color:var(--text);background:rgba(255,255,255,.03)}
+.nav-item.active{color:var(--gold2);border-left-color:var(--gold);background:var(--gold3)}
+.nav-num{font-family:'DM Mono',monospace;font-size:10px;color:var(--muted);min-width:20px}
+.sidebar-ft{padding:.9rem 1.25rem;border-top:1px solid var(--border);font-size:10.5px;color:var(--muted);line-height:1.6}
+.live-pill{display:inline-flex;align-items:center;gap:5px;font-size:10px;font-family:'DM Mono',monospace;color:var(--green);background:var(--green2);border:1px solid rgba(63,184,127,.2);padding:2px 8px;border-radius:999px;margin-top:6px}
+.live-dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.3}}
+
+.main{margin-left:228px;flex:1;padding:2rem 2.25rem;max-width:980px}
+.module{display:none}.module.active{display:block}
+.mod-tag{font-size:9.5px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:8px}
+.mod-title{font-family:'Playfair Display',serif;font-size:28px;color:var(--text);font-weight:400;margin-bottom:6px}
+.mod-desc{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:1.75rem}
+
+/* LIVE HEADER */
+.live-hdr{background:var(--bg2);border:1px solid var(--border);border-radius:12px;padding:1.25rem 1.5rem;margin-bottom:1.5rem;display:none}
+.lh-top{display:flex;align-items:flex-start;flex-wrap:wrap;gap:.75rem}
+.lh-name{font-family:'Playfair Display',serif;font-size:21px;color:var(--text)}
+.lh-tag{font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);background:var(--gold3);border:1px solid rgba(201,168,76,.2);padding:3px 10px;border-radius:999px}
+.lh-price{font-family:'DM Mono',monospace;font-size:30px;color:var(--text);margin-left:auto;text-align:right}
+.lh-chg{font-size:13px;margin-top:2px;font-family:'DM Mono',monospace}
+.up{color:var(--green)}.dn{color:var(--red)}
+.lh-grid{display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:1rem}
+.lh-stat{background:var(--bg3);border-radius:7px;padding:.6rem .75rem}
+.ls-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:3px}
+.ls-v{font-family:'DM Mono',monospace;font-size:13px;color:var(--text);font-weight:500}
+.lh-ts{font-size:10px;color:var(--muted);margin-top:.6rem;text-align:right;font-family:'DM Mono',monospace}
+
+/* FORM */
+.fg{margin-bottom:1rem}
+.fl{display:block;font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:5px}
+.fi{width:100%;background:var(--bg3);border:1px solid var(--border);border-radius:7px;padding:10px 14px;font-size:14px;color:var(--text);font-family:'DM Sans',sans-serif;outline:none;transition:border .15s}
+.fi:focus{border-color:var(--gold)}.fi::placeholder{color:var(--muted);font-size:13px}
+.fi.mono{font-family:'DM Mono',monospace;font-size:13px;letter-spacing:.8px}
+select.fi option{background:var(--bg3)}
+textarea.fi{resize:vertical;min-height:80px;line-height:1.6}
+.fr2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.fr3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px}
+
+.chips{display:flex;gap:6px;flex-wrap:wrap;align-items:center;margin-bottom:1rem}
+.cl{font-size:11px;color:var(--muted)}
+.chip{font-size:11px;padding:4px 11px;background:var(--bg3);border:1px solid var(--border);border-radius:999px;cursor:pointer;color:var(--muted2);font-family:'DM Mono',monospace;transition:all .15s}
+.chip:hover{border-color:var(--gold);color:var(--gold2)}
+
+.btn{display:inline-flex;align-items:center;gap:8px;padding:11px 26px;background:var(--gold);color:#1a1200;border:none;border-radius:7px;font-size:14px;font-weight:500;cursor:pointer;transition:all .15s;font-family:'DM Sans',sans-serif}
+.btn:hover{background:var(--gold2)}.btn:disabled{opacity:.4;cursor:not-allowed}
+
+.spin-wrap{display:none;padding:2.5rem;text-align:center}
+.spinner{width:26px;height:26px;border:2px solid rgba(201,168,76,.15);border-top-color:var(--gold);border-radius:50%;animation:spin .9s linear infinite;margin:0 auto 12px}
+@keyframes spin{to{transform:rotate(360deg)}}
+.spin-msg{font-size:13px;color:var(--muted2)}
+
+.res-wrap{display:none;margin-top:1.75rem}
+.res-lbl{font-size:9.5px;color:var(--gold);letter-spacing:2px;text-transform:uppercase;font-family:'DM Mono',monospace;margin-bottom:1rem;padding-bottom:.75rem;border-bottom:1px solid var(--border)}
+
+.card{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:1rem}
+.card-t{font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px}
+.card-b{font-size:14px;color:var(--text);line-height:1.75}
+
+.g2{display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:1rem}
+.g3{display:grid;grid-template-columns:1fr 1fr 1fr;gap:10px;margin-bottom:1rem}
+
+.mc{background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:.9rem 1rem}
+.mc-l{font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.7px;margin-bottom:4px}
+.mc-v{font-family:'DM Mono',monospace;font-size:17px;color:var(--text);font-weight:500}
+.mc-v.g{color:var(--green)}.mc-v.r{color:var(--red)}.mc-v.gold{color:var(--gold2)}
+
+.adv-list{list-style:none;display:flex;flex-direction:column;gap:8px}
+.adv-list li{display:flex;gap:10px;font-size:14px;color:var(--text);line-height:1.65}
+.adot{width:5px;height:5px;border-radius:50%;background:var(--green);margin-top:8px;flex-shrink:0}
+
+.rgrid{display:grid;grid-template-columns:1fr 1fr;gap:10px}
+.ri{background:var(--red2);border:1px solid rgba(224,85,85,.18);border-radius:8px;padding:12px 14px}
+.ri-t{font-size:12px;font-weight:500;color:var(--red);margin-bottom:4px}
+.ri-d{font-size:13px;color:var(--muted2);line-height:1.5}
+
+.srow{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.sbull{background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:8px;padding:1rem 1.25rem}
+.sbear{background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:8px;padding:1rem 1.25rem}
+.sl{font-size:10.5px;font-weight:500;text-transform:uppercase;letter-spacing:.8px;margin-bottom:8px}
+.sbull .sl{color:var(--green)}.sbear .sl{color:var(--red)}
+.sb{font-size:13px;color:var(--muted2);line-height:1.65}
+
+.tlev{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;margin-bottom:1rem}
+.lc{border-radius:8px;padding:1rem;text-align:center}
+.lc.ent{background:var(--blue2);border:1px solid rgba(74,158,255,.2)}
+.lc.stp{background:var(--red2);border:1px solid rgba(224,85,85,.2)}
+.lc.tgt{background:var(--green2);border:1px solid rgba(63,184,127,.2)}
+.ll{font-size:10px;text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px}
+.lc.ent .ll{color:var(--blue)}.lc.stp .ll{color:var(--red)}.lc.tgt .ll{color:var(--green)}
+.lv{font-family:'DM Mono',monospace;font-size:18px;font-weight:500;color:var(--text)}
+.ld{font-size:11px;color:var(--muted);margin-top:4px}
+
+.cc{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;display:flex;gap:1rem;margin-bottom:12px}
+.cc-n{font-family:'DM Mono',monospace;font-size:26px;color:rgba(201,168,76,.22);font-weight:500;min-width:36px;line-height:1}
+.cc-info{flex:1}
+.cc-name{font-size:15px;font-weight:500;color:var(--text);margin-bottom:3px}
+.cc-tick{font-family:'DM Mono',monospace;font-size:12px;color:var(--gold2);margin-bottom:8px}
+.cc-th{font-size:13px;color:var(--muted2);line-height:1.6}
+
+.scard{background:var(--bg2);border:1px solid var(--border);border-radius:10px;padding:1.25rem;margin-bottom:10px}
+.sc-top{display:flex;align-items:center;gap:10px;margin-bottom:8px}
+.sc-rank{font-family:'DM Mono',monospace;font-size:11px;color:var(--muted);background:var(--bg3);border-radius:4px;padding:2px 8px}
+.sc-name{font-size:15px;font-weight:500;color:var(--text)}
+.sc-out{font-size:9.5px;text-transform:uppercase;letter-spacing:.8px;padding:3px 10px;border-radius:999px;margin-left:auto}
+.sc-desc{font-size:13px;color:var(--muted2);line-height:1.6;margin-bottom:8px}
+.sc-stocks{display:flex;gap:6px;flex-wrap:wrap}
+.sp{font-family:'DM Mono',monospace;font-size:11px;padding:3px 10px;background:var(--bg3);border:1px solid var(--border);border-radius:999px;color:var(--muted2)}
+
+.cl-sec{margin-bottom:1.25rem}
+.cl-sec-t{font-size:13px;font-weight:500;margin-bottom:8px;display:flex;align-items:center;gap:8px}
+.cl-items{display:flex;flex-direction:column;gap:5px}
+.cl-item{display:flex;align-items:flex-start;gap:10px;padding:9px 12px;background:var(--bg3);border-radius:7px;cursor:pointer;transition:background .15s}
+.cl-item:hover{background:var(--bg4)}.cl-item.done{background:rgba(63,184,127,.07)}
+.cb{width:15px;height:15px;border:1px solid var(--border2);border-radius:3px;flex-shrink:0;margin-top:1px;display:flex;align-items:center;justify-content:center;font-size:9px;transition:all .15s}
+.cb.chk{background:var(--green);border-color:var(--green);color:#fff}
+
+.port-bars .pbar{margin-bottom:10px}
+.pb-row{display:flex;justify-content:space-between;font-size:12px;color:var(--muted2);margin-bottom:4px}
+.pb-track{height:5px;background:var(--bg3);border-radius:999px;overflow:hidden}
+.pb-fill{height:100%;border-radius:999px;background:var(--gold)}
+
+.err-box{background:var(--red2);border:1px solid rgba(224,85,85,.25);border-radius:8px;padding:12px 16px;color:#e07777;font-size:13px;display:none;line-height:1.6;margin-top:.75rem}
+
+.dbadge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:'DM Mono',monospace;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:999px;padding:3px 10px;margin-bottom:.75rem;color:var(--green)}
+.dbadge .dot{width:5px;height:5px;border-radius:50%;background:var(--green);animation:pulse 1.5s infinite}
+.aibadge{display:inline-flex;align-items:center;gap:6px;font-size:10px;font-family:'DM Mono',monospace;background:var(--gold3);border:1px solid rgba(201,168,76,.2);border-radius:999px;padding:3px 10px;margin-bottom:.75rem;color:var(--gold)}
+
+tbl{width:100%;border-collapse:collapse;font-size:13px}
+tbl th{text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:400}
+tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
+
+@media(max-width:768px){
+  .sidebar{width:0;overflow:hidden}
+  .main{margin-left:0}
+  .fr2,.g2,.srow,.rgrid,.tlev,.fr3,.g3{grid-template-columns:1fr}
+  .lh-grid{grid-template-columns:repeat(3,1fr)}
+}
+</style>
+</head>
+<body>
+<aside class="sidebar">
+  <div class="logo">
+    <div class="logo-mark">Analyst Pro</div>
+    <div class="logo-sub">Yatırım Platformu</div>
+    <div class="live-pill"><span class="live-dot"></span>Yahoo Finance Canlı</div>
+  </div>
+  <nav class="nav">
+    <div class="nav-grp">Analiz Araçları</div>
+    <div class="nav-item active" onclick="showMod(1,this)"><span class="nav-num">01</span>Hisse Analizi</div>
+    <div class="nav-item" onclick="showMod(2,this)"><span class="nav-num">02</span>Trade Planı</div>
+    <div class="nav-item" onclick="showMod(3,this)"><span class="nav-num">03</span>Bilanço Tepkisi</div>
+    <div class="nav-item" onclick="showMod(4,this)"><span class="nav-num">04</span>Portföy Riski</div>
+    <div class="nav-item" onclick="showMod(5,this)"><span class="nav-num">05</span>Sektör Fırsatı</div>
+    <div class="nav-item" onclick="showMod(6,this)"><span class="nav-num">06</span>Araştırma Listesi</div>
+    <div class="nav-item" onclick="showMod(7,this)"><span class="nav-num">07</span>Bileşik Getiri</div>
+  </nav>
+  <div class="sidebar-ft">Yatırım tavsiyesi değildir.<br>Eğitim amaçlıdır.</div>
+</aside>
+
+<main class="main">
+<!-- MOD 1 -->
+<div class="module active" id="mod1">
+  <div class="mod-tag">Modül 01</div>
+  <div class="mod-title">Kurumsal Hisse Analizi</div>
+  <div class="mod-desc">Gerçek zamanlı fiyat ve finansal verilerle AI destekli kapsamlı hisse analizi.</div>
+  <div class="live-hdr" id="lh1">
+    <div class="lh-top">
+      <div><div class="lh-name" id="lh1_name">—</div><div style="margin-top:5px"><span class="lh-tag" id="lh1_ticker">—</span></div></div>
+      <div style="margin-left:auto;text-align:right"><div class="lh-price" id="lh1_price">—</div><div class="lh-chg" id="lh1_chg">—</div></div>
+    </div>
+    <div class="lh-grid">
+      <div class="lh-stat"><div class="ls-l">Piyasa Değeri</div><div class="ls-v" id="lh1_mc">—</div></div>
+      <div class="lh-stat"><div class="ls-l">F/K Oranı</div><div class="ls-v" id="lh1_pe">—</div></div>
+      <div class="lh-stat"><div class="ls-l">F/DD</div><div class="ls-v" id="lh1_pb">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Yüksek</div><div class="ls-v" id="lh1_hi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Düşük</div><div class="ls-v" id="lh1_lo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Temettü %</div><div class="ls-v" id="lh1_div">—</div></div>
+    </div>
+    <div class="lh-ts" id="lh1_ts">—</div>
+  </div>
+  <div class="fg"><label class="fl">Hisse Kodu</label><input class="fi mono" id="m1t" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(1)"></div>
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m1t','AAPL')">AAPL</span><span class="chip" onclick="sv('m1t','NVDA')">NVDA</span><span class="chip" onclick="sv('m1t','MSFT')">MSFT</span><span class="chip" onclick="sv('m1t','TSLA')">TSLA</span><span class="chip" onclick="sv('m1t','THYAO.IS')">THYAO</span><span class="chip" onclick="sv('m1t','ASELS.IS')">ASELS</span><span class="chip" onclick="sv('m1t','EREGL.IS')">EREGL</span>
+  </div>
+  <button class="btn" id="btn1" onclick="run(1)">Analizi Başlat →</button>
+  <div class="err-box" id="err1"></div>
+  <div class="spin-wrap" id="spin1"><div class="spinner"></div><p class="spin-msg" id="sm1">Veri çekiliyor...</p></div>
+  <div class="res-wrap" id="res1"><div class="res-lbl" id="rl1">—</div><div id="rc1"></div></div>
+</div>
+
+<!-- MOD 2 -->
+<div class="module" id="mod2">
+  <div class="mod-tag">Modül 02</div>
+  <div class="mod-title">Akıllı Trade Planı</div>
+  <div class="mod-desc">Gerçek fiyatlar ve teknik seviyeler üzerinden yapılandırılmış trade planı.</div>
+  <div class="live-hdr" id="lh2">
+    <div class="lh-top">
+      <div><div class="lh-name" id="lh2_name">—</div><div style="margin-top:5px"><span class="lh-tag" id="lh2_ticker">—</span></div></div>
+      <div style="margin-left:auto;text-align:right"><div class="lh-price" id="lh2_price">—</div><div class="lh-chg" id="lh2_chg">—</div></div>
+    </div>
+    <div class="lh-grid">
+      <div class="lh-stat"><div class="ls-l">Günlük Yüksek</div><div class="ls-v" id="lh2_dhi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Günlük Düşük</div><div class="ls-v" id="lh2_dlo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Yüksek</div><div class="ls-v" id="lh2_hi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Düşük</div><div class="ls-v" id="lh2_lo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Hacim</div><div class="ls-v" id="lh2_vol">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Ort. Hacim</div><div class="ls-v" id="lh2_avol">—</div></div>
+    </div>
+    <div class="lh-ts" id="lh2_ts">—</div>
+  </div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Hisse Kodu</label><input class="fi mono" id="m2t" placeholder="AAPL" maxlength="12"></div>
+    <div class="fg"><label class="fl">Trade Yönü</label><select class="fi" id="m2d"><option value="long">Long (Alış)</option><option value="short">Short (Satış)</option></select></div>
+  </div>
+  <div class="chips"><span class="cl">Örnek:</span>
+    <span class="chip" onclick="sv('m2t','AAPL')">AAPL</span><span class="chip" onclick="sv('m2t','NVDA')">NVDA</span><span class="chip" onclick="sv('m2t','THYAO.IS')">THYAO</span><span class="chip" onclick="sv('m2t','ASELS.IS')">ASELS</span>
+  </div>
+  <button class="btn" id="btn2" onclick="run(2)">Plan Oluştur →</button>
+  <div class="err-box" id="err2"></div>
+  <div class="spin-wrap" id="spin2"><div class="spinner"></div><p class="spin-msg" id="sm2">Fiyat verileri çekiliyor...</p></div>
+  <div class="res-wrap" id="res2"><div class="res-lbl" id="rl2">—</div><div id="rc2"></div></div>
+</div>
+
+<!-- MOD 3 -->
+<div class="module" id="mod3">
+  <div class="mod-tag">Modül 03</div>
+  <div class="mod-title">Bilanço Tepkisi Analizi</div>
+  <div class="mod-desc">Güncel finansal veriler üzerinden bilanço tepkisi ve gelecek sinyalleri.</div>
+  <div class="live-hdr" id="lh3">
+    <div class="lh-top">
+      <div><div class="lh-name" id="lh3_name">—</div><div style="margin-top:5px"><span class="lh-tag" id="lh3_ticker">—</span></div></div>
+      <div style="margin-left:auto;text-align:right"><div class="lh-price" id="lh3_price">—</div><div class="lh-chg" id="lh3_chg">—</div></div>
+    </div>
+    <div class="lh-grid" style="grid-template-columns:repeat(4,1fr)">
+      <div class="lh-stat"><div class="ls-l">Toplam Gelir</div><div class="ls-v" id="lh3_rev">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Brüt Marj</div><div class="ls-v" id="lh3_gm">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Net Marj</div><div class="ls-v" id="lh3_nm">—</div></div>
+      <div class="lh-stat"><div class="ls-l">EPS (TTM)</div><div class="ls-v" id="lh3_eps">—</div></div>
+    </div>
+    <div class="lh-ts" id="lh3_ts">—</div>
+  </div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Hisse Kodu</label><input class="fi mono" id="m3t" placeholder="AAPL" maxlength="12" onkeydown="if(event.key==='Enter')run(3)"></div>
+    <div class="fg"><label class="fl">Dönem Sayısı</label><select class="fi" id="m3c"><option value="2">Son 2 bilanço</option><option value="4" selected>Son 4 bilanço</option><option value="8">Son 8 bilanço</option></select></div>
+  </div>
+  <div class="chips"><span class="cl">Örnek:</span>
+    <span class="chip" onclick="sv('m3t','AAPL')">AAPL</span><span class="chip" onclick="sv('m3t','NVDA')">NVDA</span><span class="chip" onclick="sv('m3t','MSFT')">MSFT</span><span class="chip" onclick="sv('m3t','ASELS.IS')">ASELS</span>
+  </div>
+  <button class="btn" id="btn3" onclick="run(3)">Analizi Başlat →</button>
+  <div class="err-box" id="err3"></div>
+  <div class="spin-wrap" id="spin3"><div class="spinner"></div><p class="spin-msg" id="sm3">Finansal veriler çekiliyor...</p></div>
+  <div class="res-wrap" id="res3"><div class="res-lbl" id="rl3">—</div><div id="rc3"></div></div>
+</div>
+
+<!-- MOD 4 -->
+<div class="module" id="mod4">
+  <div class="mod-tag">Modül 04</div>
+  <div class="mod-title">Portföy Risk Analizi</div>
+  <div class="mod-desc">Her hisse için canlı veri çekerek sektör yoğunlaşması ve korelasyon riski tespiti.</div>
+  <div class="fg"><label class="fl">Hisse Listesi (virgülle ayırın)</label><input class="fi" id="m4s" placeholder="AAPL, MSFT, NVDA, TSLA veya THYAO.IS, ASELS.IS, EREGL.IS"></div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Portföy Büyüklüğü</label><input class="fi" id="m4sz" placeholder="Örn: 500.000 TL veya $50,000"></div>
+    <div class="fg"><label class="fl">Yatırım Hedefi</label><select class="fi" id="m4g"><option value="uzun vadeli büyüme">Uzun vadeli büyüme</option><option value="temettü geliri">Temettü geliri</option><option value="agresif büyüme">Agresif büyüme</option><option value="korumalı büyüme">Korumalı büyüme</option></select></div>
+  </div>
+  <div class="chips"><span class="cl">Örnek:</span>
+    <span class="chip" onclick="sv('m4s','AAPL, MSFT, NVDA, TSLA, AMZN')">ABD Tech</span>
+    <span class="chip" onclick="sv('m4s','THYAO.IS, ASELS.IS, EREGL.IS, BIMAS.IS, SISE.IS')">BIST Karma</span>
+    <span class="chip" onclick="sv('m4s','AAPL, JNJ, JPM, XOM, COST')">ABD Dengeli</span>
+  </div>
+  <button class="btn" id="btn4" onclick="run(4)">Riski Analiz Et →</button>
+  <div class="err-box" id="err4"></div>
+  <div class="spin-wrap" id="spin4"><div class="spinner"></div><p class="spin-msg" id="sm4">Portföy verileri çekiliyor...</p></div>
+  <div class="res-wrap" id="res4"><div class="res-lbl" id="rl4">—</div><div id="rc4"></div></div>
+</div>
+
+<!-- MOD 5 -->
+<div class="module" id="mod5">
+  <div class="mod-tag">Modül 05</div>
+  <div class="mod-title">Sektör Fırsatı Bulucu</div>
+  <div class="mod-desc">Makro koşullara göre en iyi 5 sektör ve şirket önerileri.</div>
+  <div class="fg"><label class="fl">Makro Ekonomik Koşullar</label><textarea class="fi" id="m5m" placeholder="Örn: Fed faiz indirimleri bekleniyor, AI patlaması devam ediyor, enerji talebi artıyor..."></textarea></div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Zaman Dilimi</label><select class="fi" id="m5t"><option value="3 ay">3 ay</option><option value="6 ay" selected>6 ay</option><option value="1 yıl">1 yıl</option><option value="3 yıl">3 yıl</option></select></div>
+    <div class="fg"><label class="fl">Piyasa Odağı</label><select class="fi" id="m5mk"><option value="global">Global</option><option value="ABD S&P500">ABD (S&P 500)</option><option value="Türkiye BIST">Türkiye (BIST)</option><option value="Avrupa">Avrupa</option></select></div>
+  </div>
+  <div class="chips"><span class="cl">Senaryo:</span>
+    <span class="chip" onclick="sv('m5m','Faiz indirimleri bekleniyor, enflasyon düşüyor, AI yatırımları artıyor')">Yumuşak İniş</span>
+    <span class="chip" onclick="sv('m5m','Yüksek faiz ortamı, resesyon riski, dolar güçleniyor, emtia düşüyor')">Sıkışma</span>
+    <span class="chip" onclick="sv('m5m','AI patlaması, veri merkezi yatırımları rekor, chip talebi artıyor')">AI Dönemi</span>
+  </div>
+  <button class="btn" id="btn5" onclick="run(5)">Sektör Ara →</button>
+  <div class="err-box" id="err5"></div>
+  <div class="spin-wrap" id="spin5"><div class="spinner"></div><p class="spin-msg" id="sm5">Sektörler analiz ediliyor...</p></div>
+  <div class="res-wrap" id="res5"><div class="res-lbl" id="rl5">—</div><div id="rc5"></div></div>
+</div>
+
+<!-- MOD 6 -->
+<div class="module" id="mod6">
+  <div class="mod-tag">Modül 06</div>
+  <div class="mod-title">Yatırım Araştırma Listesi</div>
+  <div class="mod-desc">Yatırım öncesi interaktif adım adım inceleme çerçevesi.</div>
+  <div class="fg"><label class="fl">Şirket / Hisse Kodu</label><input class="fi mono" id="m6c" placeholder="AAPL veya Apple" onkeydown="if(event.key==='Enter')run(6)"></div>
+  <div class="chips"><span class="cl">Örnek:</span>
+    <span class="chip" onclick="sv('m6c','AAPL')">AAPL</span><span class="chip" onclick="sv('m6c','NVDA')">NVDA</span><span class="chip" onclick="sv('m6c','ASELS.IS')">ASELS</span><span class="chip" onclick="sv('m6c','THYAO.IS')">THYAO</span>
+  </div>
+  <button class="btn" id="btn6" onclick="run(6)">Liste Oluştur →</button>
+  <div class="err-box" id="err6"></div>
+  <div class="spin-wrap" id="spin6"><div class="spinner"></div><p class="spin-msg" id="sm6">Araştırma çerçevesi hazırlanıyor...</p></div>
+  <div class="res-wrap" id="res6"><div class="res-lbl" id="rl6">—</div><div id="rc6"></div></div>
+</div>
+
+<!-- MOD 7 -->
+<div class="module" id="mod7">
+  <div class="mod-tag">Modül 07</div>
+  <div class="mod-title">Uzun Vadeli Bileşik Getiri Şirketleri</div>
+  <div class="mod-desc">Güçlü büyüme, yüksek marj ve kalıcı rekabet avantajına sahip 5 aday şirket.</div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Referans Şirket</label><input class="fi mono" id="m7r" placeholder="AAPL, Visa, LVMH..."></div>
+    <div class="fg"><label class="fl">Odak Bölgesi</label><select class="fi" id="m7rg"><option value="global">Global</option><option value="ABD">ABD</option><option value="Türkiye BIST">Türkiye (BIST)</option><option value="Avrupa">Avrupa</option><option value="Asya">Asya</option></select></div>
+  </div>
+  <div class="chips"><span class="cl">Referans:</span>
+    <span class="chip" onclick="sv('m7r','AAPL')">AAPL</span><span class="chip" onclick="sv('m7r','Visa')">Visa</span><span class="chip" onclick="sv('m7r','LVMH')">LVMH</span><span class="chip" onclick="sv('m7r','ASELS.IS')">ASELS</span>
+  </div>
+  <button class="btn" id="btn7" onclick="run(7)">Şirket Bul →</button>
+  <div class="err-box" id="err7"></div>
+  <div class="spin-wrap" id="spin7"><div class="spinner"></div><p class="spin-msg" id="sm7">Şirketler taranıyor...</p></div>
+  <div class="res-wrap" id="res7"><div class="res-lbl" id="rl7">—</div><div id="rc7"></div></div>
+</div>
+</main>
+
+<script>
+const BASE = 'http://localhost:8765';
+const spinT = {
+  1:['Yahoo Finance\'tan veri çekiliyor...','Finansal metrikler analiz ediliyor...','Rekabet değerlendiriliyor...','Senaryo oluşturuluyor...'],
+  2:['Gerçek zamanlı fiyat alınıyor...','Teknik seviyeler hesaplanıyor...','Risk-ödül belirleniyor...'],
+  3:['Bilanço verileri çekiliyor...','Finansal performans analiz ediliyor...','Sinyaller tespit ediliyor...'],
+  4:['Hisse verileri tek tek çekiliyor...','Sektör dağılımı hesaplanıyor...','Korelasyon analizi yapılıyor...'],
+  5:['Makro değerlendiriliyor...','Sektör fırsatları taranıyor...','Şirket önerileri oluşturuluyor...'],
+  6:['Şirket profili inceleniyor...','Kontrol listesi oluşturuluyor...'],
+  7:['Referans analiz ediliyor...','Benzer şirketler taranıyor...','Yatırım tezleri hazırlanıyor...']
+};
+let spInt={};
+const $=id=>document.getElementById(id);
+function showMod(n,el){document.querySelectorAll('.module').forEach(m=>m.classList.remove('active'));document.querySelectorAll('.nav-item').forEach(i=>i.classList.remove('active'));$('mod'+n).classList.add('active');el.classList.add('active');}
+function sv(id,v){$(id).value=v;}
+function startSpin(n){$('spin'+n).style.display='block';$('res'+n).style.display='none';$('err'+n).style.display='none';$('btn'+n).disabled=true;const m=spinT[n];let i=0;$('sm'+n).textContent=m[0];spInt[n]=setInterval(()=>$('sm'+n).textContent=m[(++i)%m.length],2200);}
+function stopSpin(n){clearInterval(spInt[n]);$('spin'+n).style.display='none';$('btn'+n).disabled=false;}
+function showErr(n,msg){$('err'+n).textContent=msg;$('err'+n).style.display='block';}
+
+function fmtN(n,d=2){if(n==null||isNaN(n))return'—';if(Math.abs(n)>=1e12)return(n/1e12).toFixed(1)+'T';if(Math.abs(n)>=1e9)return(n/1e9).toFixed(1)+'B';if(Math.abs(n)>=1e6)return(n/1e6).toFixed(1)+'M';if(Math.abs(n)>=1e3)return(n/1e3).toFixed(1)+'K';return Number(n).toFixed(d);}
+function fmtP(n){if(n==null||isNaN(n))return'—';return(n*100).toFixed(2)+'%';}
+function fmtPr(n){if(n==null||isNaN(n))return'—';return Number(n).toFixed(2);}
+function sym(cur){return cur==='TRY'?'₺':cur==='EUR'?'€':'$';}
+
+async function getQuote(ticker){
+  const r=await fetch(`${BASE}/api/quote?ticker=${ticker}`);
+  if(!r.ok)throw new Error('Hisse bulunamadı: '+ticker);
+  const d=await r.json();
+  if(d.chart?.error)throw new Error(d.chart.error.description||'Veri alınamadı');
+  return d.chart.result[0];
+}
+async function getSummary(ticker){
+  const r=await fetch(`${BASE}/api/summary?ticker=${ticker}`);
+  if(!r.ok)return null;
+  const d=await r.json();
+  if(d.quoteSummary?.error)return null;
+  return d.quoteSummary?.result?.[0]||null;
+}
+async function getAll(ticker){
+  const [q,s]=await Promise.all([getQuote(ticker),getSummary(ticker)]);
+  return{meta:q.meta,summary:s};
+}
+
+function fillHeader(pfx,meta,sum){
+  const pr=meta.regularMarketPrice,prev=meta.chartPreviousClose||meta.regularMarketPreviousClose;
+  const chg=pr-prev,chgP=(chg/prev)*100,s=sym(meta.currency);
+  const price$=sum?.price||{},sd=sum?.summaryDetail||{},ks=sum?.defaultKeyStatistics||{},fd=sum?.financialData||{};
+  $(pfx+'_name').textContent=price$.longName||price$.shortName||meta.symbol;
+  $(pfx+'_ticker').textContent=meta.symbol;
+  $(pfx+'_price').textContent=s+fmtPr(pr);
+  const cel=$(pfx+'_chg');
+  cel.textContent=(chg>=0?'+':'')+fmtPr(chg)+' ('+(chg>=0?'+':'')+chgP.toFixed(2)+'%)';
+  cel.className='lh-chg '+(chg>=0?'up':'dn');
+  // header-specific stats
+  if($(pfx+'_mc')){$(pfx+'_mc').textContent=fmtN(price$.marketCap?.raw);$(pfx+'_pe').textContent=fmtN(sd.trailingPE?.raw,1);$(pfx+'_pb').textContent=fmtN(ks.priceToBook?.raw,1);$(pfx+'_hi').textContent=s+fmtPr(sd.fiftyTwoWeekHigh?.raw||meta.fiftyTwoWeekHigh);$(pfx+'_lo').textContent=s+fmtPr(sd.fiftyTwoWeekLow?.raw||meta.fiftyTwoWeekLow);$(pfx+'_div').textContent=sd.dividendYield?.raw?fmtP(sd.dividendYield.raw):'—';}
+  if($(pfx+'_dhi')){$(pfx+'_dhi').textContent=s+fmtPr(meta.regularMarketDayHigh);$(pfx+'_dlo').textContent=s+fmtPr(meta.regularMarketDayLow);$(pfx+'_hi').textContent=s+fmtPr(meta.fiftyTwoWeekHigh||sd.fiftyTwoWeekHigh?.raw);$(pfx+'_lo').textContent=s+fmtPr(meta.fiftyTwoWeekLow||sd.fiftyTwoWeekLow?.raw);$(pfx+'_vol').textContent=fmtN(meta.regularMarketVolume,0);$(pfx+'_avol').textContent=fmtN(sd.averageVolume?.raw,0);}
+  if($(pfx+'_rev')){$(pfx+'_rev').textContent=fmtN(fd.totalRevenue?.raw);$(pfx+'_gm').textContent=fmtP(fd.grossMargins?.raw);$(pfx+'_nm').textContent=fmtP(fd.profitMargins?.raw);$(pfx+'_eps').textContent=fmtN(ks.trailingEps?.raw,2);}
+  $(pfx+'_ts').textContent='Son güncelleme: '+new Date().toLocaleTimeString('tr-TR')+' · Yahoo Finance';
+  document.getElementById(pfx.split('_')[0]).style.display='block';
+}
+
+async function callClaude(prompt){
+  // Tüm Claude çağrıları launcher.py üzerinden yapılır — API key tarayıcıya açılmaz
+  const r=await fetch('/api/claude',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({prompt})});
+  const d=await r.json();
+  if(!r.ok||d.error)throw new Error(d.error||'Claude API hatası');
+  return d.result;
+}
+
+function card(t,b,extra=''){return`<div class="card" ${extra}><div class="card-t">${t}</div><div class="card-b">${b}</div></div>`;}
+function badge(live){return live?`<div class="dbadge"><span class="dot"></span>Canlı Yahoo Finance Verisi</div>`:`<div class="aibadge">⚡ AI Analizi</div>`;}
+
+// ─── MOD 1 ───
+async function m1(){
+  const t=($('m1t').value||'').trim().toUpperCase();if(!t)return alert('Hisse kodu giriniz.');
+  startSpin(1);let live=null,lok=false;
+  try{live=await getAll(t);lok=true;fillHeader('lh1',live.meta,live.summary);}catch(e){console.warn(e);}
+  try{
+    const fd=live?.summary?.financialData||{},sd=live?.summary?.summaryDetail||{},ks=live?.summary?.defaultKeyStatistics||{},pr=live?.summary?.price||{},s=sym(live?.meta?.currency);
+    const ctx=lok?`GERÇEK ZAMANLI VERİLER (Yahoo Finance):
+Şirket: ${pr.longName||t} | Fiyat: ${s}${fmtPr(live.meta.regularMarketPrice)} | Piyasa Değeri: ${fmtN(pr.marketCap?.raw)}
+F/K: ${fmtN(sd.trailingPE?.raw,1)} | F/DD: ${fmtN(ks.priceToBook?.raw,1)} | EPS: ${fmtN(ks.trailingEps?.raw,2)}
+Brüt Marj: ${fmtP(fd.grossMargins?.raw)} | İşletme Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}
+Gelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)} | FCF: ${fmtN(fd.freeCashflow?.raw)}
+52H Yük/Düş: ${s}${fmtPr(sd.fiftyTwoWeekHigh?.raw)} / ${s}${fmtPr(sd.fiftyTwoWeekLow?.raw)}
+Analist Hedef: ${s}${fmtN(fd.targetMeanPrice?.raw,2)} | Temettü: ${fmtP(sd.dividendYield?.raw)}`:'Gerçek veri yok.';
+    const j=await callClaude(`Hisse senedi analisti olarak "${t}" hissesini analiz et.\n${ctx}\nSADECE JSON:\n{"sirket_adi":"tam adı","is_modeli":"iş modeli ve gelir kaynakları, mevcut verilere atıf yap 3-4 cümle","rekabet_avantajlari":["a1","a2","a3","a4"],"riskler":[{"baslik":"R1","aciklama":"ac"},{"baslik":"R2","aciklama":"ac"},{"baslik":"R3","aciklama":"ac"},{"baslik":"R4","aciklama":"ac"}],"buyume_potansiyeli":"büyüme potansiyeli 3-4 cümle","bullish_senaryo":"yükseliş 3-4 cümle, hedef fiyat belirt","bearish_senaryo":"düşüş 3-4 cümle, risk belirt","analist":"analist konsensüsü 2 cümle","bulunamadi":false}\nTürkçe yaz.`);
+    stopSpin(1);if(j.bulunamadi){showErr(1,'"'+t+'" tanınamadı.');return;}
+    $('rl1').textContent=t+' — '+(j.sirket_adi||'');
+    let h=badge(lok);
+    h+=card('İş Modeli & Gelir Kaynakları',j.is_modeli);
+    h+=`<div class="card"><div class="card-t">Rekabet Avantajları</div><ul class="adv-list">`;(j.rekabet_avantajlari||[]).forEach(a=>{h+=`<li><span class="adot"></span><span>${a}</span></li>`;});h+=`</ul></div>`;
+    h+=`<div class="card"><div class="card-t">Temel Riskler</div><div class="rgrid">`;(j.riskler||[]).forEach(r=>{h+=`<div class="ri"><div class="ri-t">${r.baslik}</div><div class="ri-d">${r.aciklama}</div></div>`;});h+=`</div></div>`;
+    h+=card('Uzun Vadeli Büyüme Potansiyeli',j.buyume_potansiyeli);
+    h+=`<div class="card"><div class="card-t">Yatırım Senaryoları</div><div class="srow"><div class="sbull"><div class="sl">Yükseliş (Bullish)</div><div class="sb">${j.bullish_senaryo}</div></div><div class="sbear"><div class="sl">Düşüş (Bearish)</div><div class="sb">${j.bearish_senaryo}</div></div></div></div>`;
+    if(j.analist)h+=card('Analist Konsensüsü',j.analist,'style="border-color:rgba(74,158,255,.2)"');
+    $('rc1').innerHTML=h;$('res1').style.display='block';
+  }catch(e){stopSpin(1);showErr(1,'Hata: '+e.message);}
+}
+
+// ─── MOD 2 ───
+async function m2(){
+  const t=($('m2t').value||'').trim().toUpperCase(),dir=$('m2d').value;if(!t)return alert('Hisse kodu giriniz.');
+  startSpin(2);let live=null,lok=false;
+  try{live=await getAll(t);lok=true;fillHeader('lh2',live.meta,live.summary);}catch(e){console.warn(e);}
+  try{
+    const m=live?.meta||{},sd=live?.summary?.summaryDetail||{},s=sym(m.currency);
+    const ctx=lok?`GERÇEK FİYAT VERİLERİ:\nGüncel fiyat: ${s}${fmtPr(m.regularMarketPrice)}\nGünlük yüksek/düşük: ${s}${fmtPr(m.regularMarketDayHigh)} / ${s}${fmtPr(m.regularMarketDayLow)}\n52H yüksek/düşük: ${s}${fmtPr(m.fiftyTwoWeekHigh||sd.fiftyTwoWeekHigh?.raw)} / ${s}${fmtPr(m.fiftyTwoWeekLow||sd.fiftyTwoWeekLow?.raw)}\nHacim: ${fmtN(m.regularMarketVolume,0)} | Ort. Hacim: ${fmtN(sd.averageVolume?.raw,0)}`:'Gerçek veri yok.';
+    const j=await callClaude(`Profesyonel trader olarak ${t} için ${dir} trade planı oluştur.\n${ctx}\nGerçek fiyatları kullanarak SADECE JSON:\n{"ozet":"2 cümle teknik tablo","entry_alt":"giriş alt","entry_ust":"giriş üst","stop_loss":"stop loss","stop_ac":"stop gerekçesi","h1":"hedef 1","h2":"hedef 2","h3":"hedef 3","rr":"risk-ödül oranı","strateji":"3-4 cümle strateji","poz":"önerilen portföy %","uyari":"uyarılar"}\nTüm fiyatlar ${s} cinsinden. Türkçe yaz.`);
+    stopSpin(2);$('rl2').textContent=t+' — Trade Planı ('+dir.toUpperCase()+')';
+    let h=badge(lok);
+    h+=`<div class="tlev"><div class="lc ent"><div class="ll">Giriş Bölgesi</div><div class="lv">${j.entry_alt}–${j.entry_ust}</div><div class="ld">Alış zonu</div></div><div class="lc stp"><div class="ll">Stop Loss</div><div class="lv">${j.stop_loss}</div><div class="ld">${j.stop_ac||'Risk sınırı'}</div></div><div class="lc tgt"><div class="ll">Risk/Ödül</div><div class="lv">${j.rr}</div><div class="ld">Oran</div></div></div>`;
+    h+=`<div class="g2"><div class="card"><div class="card-t">Hedef Fiyatlar</div><div style="display:flex;flex-direction:column;gap:9px">`;
+    [{l:'Hedef 1',v:j.h1},{l:'Hedef 2',v:j.h2},{l:'Hedef 3',v:j.h3}].forEach(x=>{h+=`<div style="display:flex;justify-content:space-between;font-size:14px"><span style="color:var(--muted2)">${x.l}</span><span style="font-family:'DM Mono',monospace;color:var(--green)">${x.v}</span></div>`;});
+    h+=`</div></div><div class="card"><div class="card-t">Pozisyon Büyüklüğü</div><div style="text-align:center;padding:1rem 0"><div style="font-family:'DM Mono',monospace;font-size:34px;color:var(--gold2)">${j.poz||'%5'}</div><div style="font-size:12px;color:var(--muted);margin-top:4px">önerilen portföy ağırlığı</div></div></div></div>`;
+    h+=card('Teknik Durum & Strateji',j.ozet+'<br><br>'+j.strateji);
+    h+=card('Uyarılar',j.uyari,'style="border-color:rgba(201,168,76,.2)"');
+    $('rc2').innerHTML=h;$('res2').style.display='block';
+  }catch(e){stopSpin(2);showErr(2,'Hata: '+e.message);}
+}
+
+// ─── MOD 3 ───
+async function m3(){
+  const t=($('m3t').value||'').trim().toUpperCase(),cnt=$('m3c').value;if(!t)return alert('Hisse kodu giriniz.');
+  startSpin(3);let live=null,lok=false;
+  try{live=await getAll(t);lok=true;fillHeader('lh3',live.meta,live.summary);}catch(e){console.warn(e);}
+  try{
+    const fd=live?.summary?.financialData||{},ks=live?.summary?.defaultKeyStatistics||{},s=sym(live?.meta?.currency);
+    const ctx=lok?`GERÇEK FİNANSAL VERİLER:\nGelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)}\nBrüt Marj: ${fmtP(fd.grossMargins?.raw)} | İşletme Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}\nEPS: ${s}${fmtN(ks.trailingEps?.raw,2)} | Kazanç Büyümesi: ${fmtP(fd.earningsGrowth?.raw)}\nSerbest Nakit Akışı: ${fmtN(fd.freeCashflow?.raw)} | ROE: ${fmtP(fd.returnOnEquity?.raw)}`:'Gerçek veri yok.';
+    const j=await callClaude(`Finansal analist olarak ${t} için son ${cnt} bilanço dönemi analizi yap.\n${ctx}\nSADECE JSON:\n{"genel":"mevcut verilerle 2-3 cümle genel değerlendirme","tepkiler":[{"donem":"Q4 2024","tepki":"pozitif","ac":"açıklama"},{"donem":"Q3 2024","tepki":"negatif","ac":"açıklama"},{"donem":"Q2 2024","tepki":"nötr","ac":"açıklama"},{"donem":"Q1 2024","tepki":"pozitif","ac":"açıklama"}],"guidance":"beklenti değişimleri 2-3 cümle","duyarlilik":"yatırımcı duyarlılığı 2-3 cümle","sinyaller":["s1","s2","s3","s4"],"sonraki":"bir sonraki bilanço öncesi 2-3 kritik nokta"}\nTürkçe yaz.`);
+    stopSpin(3);$('rl3').textContent=t+' — Bilanço Analizi (Son '+cnt+' Dönem)';
+    let h=badge(lok);h+=card('Finansal Performans',j.genel);
+    h+=`<div class="card"><div class="card-t">Piyasa Tepkileri</div>`;
+    (j.tepkiler||[]).forEach(r=>{const c=r.tepki==='pozitif'?'var(--green)':r.tepki==='negatif'?'var(--red)':'var(--muted2)';h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)"><div style="font-family:'DM Mono',monospace;font-size:12px;color:var(--muted);min-width:72px">${r.donem}</div><div style="font-size:11px;font-weight:500;color:${c};min-width:60px;text-transform:uppercase">${r.tepki}</div><div style="font-size:13px;color:var(--muted2);line-height:1.5">${r.ac}</div></div>`;});
+    h+=`</div>`;
+    h+=card('Guidance Değişiklikleri',j.guidance);h+=card('Yatırımcı Duyarlılığı',j.duyarlilik);
+    h+=`<div class="card"><div class="card-t">Trader Sinyalleri</div><ul class="adv-list">`;(j.sinyaller||[]).forEach(s=>{h+=`<li><span class="adot" style="background:var(--gold)"></span><span>${s}</span></li>`;});h+=`</ul></div>`;
+    h+=card('Sonraki Bilanço — Kritik Noktalar',j.sonraki,'style="border-color:rgba(74,158,255,.2)"');
+    $('rc3').innerHTML=h;$('res3').style.display='block';
+  }catch(e){stopSpin(3);showErr(3,'Hata: '+e.message);}
+}
+
+// ─── MOD 4 ───
+async function m4(){
+  const raw=$('m4s').value.trim(),size=$('m4sz').value.trim(),goal=$('m4g').value;
+  if(!raw)return alert('Hisse listesi giriniz.');
+  const tickers=raw.split(',').map(s=>s.trim().toUpperCase()).filter(Boolean);
+  startSpin(4);
+  const rows=[];
+  for(const t of tickers){
+    try{
+      const d=await getAll(t);
+      const pr=d.summary?.price||{},fd=d.summary?.financialData||{},sd=d.summary?.summaryDetail||{},ks=d.summary?.defaultKeyStatistics||{};
+      rows.push({t,name:pr.longName||t,sector:pr.sector||'Bilinmiyor',price:d.meta.regularMarketPrice,mcap:pr.marketCap?.raw,pe:sd.trailingPE?.raw,beta:sd.beta?.raw||ks.beta?.raw,gm:fd.grossMargins?.raw,rg:fd.revenueGrowth?.raw,ok:true});
+    }catch(e){rows.push({t,name:t,sector:'?',price:null,ok:false});}
+  }
+  try{
+    const ctx=rows.map(r=>`${r.t}: ${r.name}, Sektör:${r.sector}, Fiyat:${r.price?r.price.toFixed(2):'?'}, Beta:${r.beta?r.beta.toFixed(2):'?'}, F/K:${r.pe?r.pe.toFixed(1):'?'}, GelirBüy:${r.rg?fmtP(r.rg):'?'}`).join('\n');
+    const j=await callClaude(`Portföy risk analisti olarak şu portföyü analiz et:\n${ctx}\nBüyüklük: ${size||'belirtilmedi'} | Hedef: ${goal}\nSADECE JSON:\n{"skor":"1-10","yorum":"2-3 cümle","sektorler":[{"ad":"sektör","yuzde":40,"yorum":"kısa"}],"korelasyon":"2-3 cümle","zayifliklar":["z1","z2","z3"],"oneriler":["o1","o2","o3"],"div_skor":"1-10"}\nTürkçe yaz.`);
+    stopSpin(4);$('rl4').textContent='Portföy Risk Raporu ('+tickers.length+' hisse)';
+    const sc=Number(j.skor)||5,sc_c=sc>7?'var(--red)':sc>4?'var(--gold2)':'var(--green)';
+    let h=badge(rows.some(r=>r.ok));
+    h+=`<div class="g3"><div class="mc"><div class="mc-l">Risk Skoru</div><div class="mc-v" style="color:${sc_c}">${j.skor}/10</div></div><div class="mc"><div class="mc-l">Diversifikasyon</div><div class="mc-v gold">${j.div_skor}/10</div></div><div class="mc"><div class="mc-l">Hisse Sayısı</div><div class="mc-v">${tickers.length}</div></div></div>`;
+    h+=card('Genel Değerlendirme',j.yorum);
+    h+=`<div class="card"><div class="card-t">Sektör Dağılımı</div><div class="port-bars">`;(j.sektorler||[]).forEach(s=>{h+=`<div class="pbar"><div class="pb-row"><span>${s.ad}</span><span style="font-family:'DM Mono',monospace">%${s.yuzde}</span></div><div class="pb-track"><div class="pb-fill" style="width:${Math.min(s.yuzde,100)}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px">${s.yorum}</div></div>`;});h+=`</div></div>`;
+    h+=`<div class="card"><div class="card-t">Hisse Detayları (Canlı Veri)</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${['Hisse','Şirket','Sektör','Fiyat','Beta','F/K'].map(c=>`<th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:400">${c}</th>`).join('')}</tr></thead><tbody>`;
+    rows.forEach(r=>{h+=`<tr><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--gold2)">${r.t}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text)">${r.name}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted2)">${r.sector}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.price?r.price.toFixed(2):'—'}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.beta?r.beta.toFixed(2):'—'}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.pe?r.pe.toFixed(1):'—'}</td></tr>`;});
+    h+=`</tbody></table></div></div>`;
+    h+=card('Korelasyon & Sistematik Risk',j.korelasyon);
+    h+=`<div class="g2"><div class="card"><div class="card-t">Portföy Zayıflıkları</div><ul class="adv-list">`;(j.zayifliklar||[]).forEach(z=>{h+=`<li><span class="adot" style="background:var(--red)"></span><span>${z}</span></li>`;});h+=`</ul></div><div class="card"><div class="card-t">Öneriler</div><ul class="adv-list">`;(j.oneriler||[]).forEach(o=>{h+=`<li><span class="adot"></span><span>${o}</span></li>`;});h+=`</ul></div></div>`;
+    $('rc4').innerHTML=h;$('res4').style.display='block';
+  }catch(e){stopSpin(4);showErr(4,'Hata: '+e.message);}
+}
+
+// ─── MOD 5 ───
+async function m5(){
+  const macro=$('m5m').value.trim(),time=$('m5t').value,mkt=$('m5mk').value;if(!macro)return alert('Makro koşulları giriniz.');
+  startSpin(5);
+  try{
+    const j=await callClaude(`Makroekonomik stratejist olarak analiz et.\nKoşullar: ${macro}\nZaman: ${time} | Piyasa: ${mkt}\nSADECE JSON:\n{"ozet":"2-3 cümle makro değerlendirme","sektorler":[{"sira":1,"ad":"Sektör","beklenti":"Yüksek","ac":"2-3 cümle neden","hisseler":["H1","H2","H3"],"etf":"ETF varsa"},{"sira":2,"ad":"S","beklenti":"Yüksek","ac":"ac","hisseler":["H1","H2","H3"],"etf":""},{"sira":3,"ad":"S","beklenti":"Orta-Yüksek","ac":"ac","hisseler":["H1","H2","H3"],"etf":""},{"sira":4,"ad":"S","beklenti":"Orta-Yüksek","ac":"ac","hisseler":["H1","H2","H3"],"etf":""},{"sira":5,"ad":"S","beklenti":"Orta","ac":"ac","hisseler":["H1","H2","H3"],"etf":""}],"kacin":["sektör1","sektör2"]}\nTürkçe yaz. ${mkt} piyasasına uygun hisseler.`);
+    stopSpin(5);$('rl5').textContent='Sektör Fırsatları — '+time+' ('+mkt+')';
+    let h=card('Makro Değerlendirme',j.ozet);
+    (j.sektorler||[]).forEach(s=>{
+      const bg=s.beklenti==='Yüksek'?'rgba(63,184,127,.12)':'rgba(201,168,76,.1)',tc=s.beklenti==='Yüksek'?'var(--green)':'var(--gold2)';
+      h+=`<div class="scard"><div class="sc-top"><span class="sc-rank">#${s.sira}</span><span class="sc-name">${s.ad}</span><span class="sc-out" style="background:${bg};color:${tc}">${s.beklenti}</span></div><div class="sc-desc">${s.ac}</div><div class="sc-stocks">${(s.hisseler||[]).map(x=>`<span class="sp">${x}</span>`).join('')}${s.etf?`<span class="sp" style="color:var(--blue);border-color:rgba(74,158,255,.2)">ETF: ${s.etf}</span>`:''}</div></div>`;
+    });
+    if(j.kacin?.length){h+=`<div class="card" style="border-color:rgba(224,85,85,.2);margin-top:1rem"><div class="card-t" style="color:var(--red)">Kaçınılacak Sektörler</div><ul class="adv-list">`;j.kacin.forEach(s=>{h+=`<li><span class="adot" style="background:var(--red)"></span><span>${s}</span></li>`;});h+=`</ul></div>`;}
+    $('rc5').innerHTML=h;$('res5').style.display='block';
+  }catch(e){stopSpin(5);showErr(5,'Hata: '+e.message);}
+}
+
+// ─── MOD 6 ───
+async function m6(){
+  const c=($('m6c').value||'').trim();if(!c)return alert('Şirket giriniz.');
+  startSpin(6);
+  try{
+    const j=await callClaude(`Yatırım araştırma uzmanı olarak "${c}" için kapsamlı kontrol listesi oluştur. SADECE JSON:\n{"finansal":[{"b":"madde","a":"açıklama"},{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"}],"rekabet":[{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"}],"yonetim":[{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"}],"deger":[{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"}],"bayraklar":[{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"},{"b":"m","a":"a"}]}\nTürkçe yaz. Şirkete özel sorular.`);
+    stopSpin(6);$('rl6').textContent=c+' — Araştırma Kontrol Listesi';
+    const secs=[{k:'finansal',t:'Finansal Metrikler',i:'▲',c:'var(--gold2)'},{k:'rekabet',t:'Rekabet Avantajları',i:'◆',c:'var(--green)'},{k:'yonetim',t:'Yönetim Kalitesi',i:'●',c:'var(--blue)'},{k:'deger',t:'Değerleme Metrikleri',i:'■',c:'var(--gold2)'},{k:'bayraklar',t:'Kırmızı Bayraklar',i:'✕',c:'var(--red)'}];
+    let h=`<div style="font-size:12px;color:var(--muted);margin-bottom:.75rem">Tamamlanan maddelere tıklayın</div>`,gi=0;
+    secs.forEach(sec=>{
+      h+=`<div class="cl-sec"><div class="cl-sec-t" style="color:${sec.c}">${sec.i} ${sec.t}</div><div class="cl-items">`;
+      (j[sec.k]||[]).forEach(item=>{const id='ci'+gi++;h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')"><div class="cb" id="cb_${id}"></div><div><div style="font-weight:500;font-size:13px;color:var(--text);margin-bottom:2px">${item.b}</div><div style="font-size:12px;color:var(--muted)">${item.a}</div></div></div>`;});
+      h+=`</div></div>`;
+    });
+    $('rc6').innerHTML=h;$('res6').style.display='block';
+  }catch(e){stopSpin(6);showErr(6,'Hata: '+e.message);}
+}
+function toggleCl(id){const el=$(id),cb=$('cb_'+id),done=el.classList.toggle('done');cb.classList.toggle('chk',done);cb.textContent=done?'✓':'';}
+
+// ─── MOD 7 ───
+async function m7(){
+  const ref=($('m7r').value||'').trim(),reg=$('m7rg').value;if(!ref)return alert('Referans şirket giriniz.');
+  startSpin(7);let liveRef=null,lok=false;
+  try{liveRef=await getAll(ref.toUpperCase());lok=true;}catch(e){console.warn(e);}
+  try{
+    const fd=liveRef?.summary?.financialData||{},ks=liveRef?.summary?.defaultKeyStatistics||{};
+    const ctx=lok?`Referans verileri: Brüt Marj ${fmtP(fd.grossMargins?.raw)}, İşletme Marjı ${fmtP(fd.operatingMargins?.raw)}, Gelir Büyümesi ${fmtP(fd.revenueGrowth?.raw)}, ROE ${fmtP(fd.returnOnEquity?.raw)}`:'';
+    const j=await callClaude(`Değer yatırımcısı olarak "${ref}" benzeri, ${reg} bölgesinde bileşik getiri potansiyeli yüksek 5 şirket öner.\n${ctx}\nSADECE JSON:\n{"ref_ozet":"referans şirket neden güçlü bileşik getiri örneği 2-3 cümle","adaylar":[{"ad":"Şirket","ticker":"T","sektor":"S","tez":"yatırım tezi 3-4 cümle","guclu":["g1","g2","g3"],"risk":"ana risk","benzerlik":"referansa benzerlik"},{"ad":"","ticker":"","sektor":"","tez":"","guclu":["","",""],"risk":"","benzerlik":""},{"ad":"","ticker":"","sektor":"","tez":"","guclu":["","",""],"risk":"","benzerlik":""},{"ad":"","ticker":"","sektor":"","tez":"","guclu":["","",""],"risk":"","benzerlik":""},{"ad":"","ticker":"","sektor":"","tez":"","guclu":["","",""],"risk":"","benzerlik":""}]}\nTürkçe yaz. 5 tam aday.`);
+    stopSpin(7);$('rl7').textContent=ref+' benzeri — 5 Bileşik Getiri Adayı';
+    let h=badge(lok);h+=card('Referans Analizi: '+ref,j.ref_ozet);
+    (j.adaylar||[]).forEach((c,i)=>{
+      h+=`<div class="cc"><div class="cc-n">0${i+1}</div><div class="cc-info"><div style="display:flex;align-items:center;gap:10px;margin-bottom:3px"><div class="cc-name">${c.ad}</div><div style="font-size:10px;padding:2px 8px;background:var(--bg3);border:1px solid var(--border);border-radius:999px;color:var(--muted2)">${c.sektor||''}</div></div><div class="cc-tick">${c.ticker}</div><div class="cc-th">${c.tez}</div><div style="margin-top:8px;display:flex;gap:6px;flex-wrap:wrap">`;
+      (c.guclu||[]).forEach(g=>{h+=`<span style="font-size:11px;padding:3px 10px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:999px;color:var(--green)">${g}</span>`;});
+      h+=`</div><div style="margin-top:8px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);padding-top:8px">⚠ ${c.risk}</div><div style="margin-top:4px;font-size:11px;color:var(--gold);font-style:italic">↳ ${c.benzerlik}</div></div></div>`;
+    });
+    $('rc7').innerHTML=h;$('res7').style.display='block';
+  }catch(e){stopSpin(7);showErr(7,'Hata: '+e.message);}
+}
+
+const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7};
+function run(n){runners[n]();}
+</script>
+</body>
+</html>
