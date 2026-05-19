@@ -1580,35 +1580,7 @@ Hacim: ${fmtN(m.regularMarketVolume,0)}`;
 
   try{
     const bugun=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
-    const j=await callClaude(`Profesyonel trader ve analist olarak bugün (${bugun}) ${t} piyasası için yüksek olasılıklı 5 trade fırsatı belirle.
-${liveCtx?liveCtx+'
-':''}
-Analiz tipi: ${tip}
-${ctx?'Ek bağlam: '+ctx:''}
-
-Her trade için hem teknik hem temel analiz perspektifinden mantığı açıkla.
-SADECE JSON döndür:
-{
-  "piyasa_ozet": "2-3 cümle bugünkü piyasa görünümü ve genel durum",
-  "tradeler": [
-    {
-      "no": 1,
-      "enstruman": "hisse/endeks/emtia adı",
-      "yon": "LONG",
-      "giris": "giriş seviyesi",
-      "hedef1": "1. kar hedefi",
-      "hedef2": "2. kar hedefi",
-      "stop": "stop loss seviyesi",
-      "rr": "risk/ödül oranı örn 1:2.5",
-      "olasilik": "yüksek/orta-yüksek/orta",
-      "teknik_mantik": "2-3 cümle teknik analiz gerekçesi — destek/direnç, formasyon, indikatör",
-      "temel_mantik": "2-3 cümle temel analiz gerekçesi — katalist, haber, sektör dinamiği",
-      "sure": "intraday/swing/kısa vade"
-    }
-  ],
-  "risk_uyari": "genel risk uyarısı 1-2 cümle"
-}
-Türkçe yaz. 5 trade ver. Gerçekçi ve uygulanabilir seviyeler öner.`);
+    const j=await callClaude('Profesyonel trader ve analist olarak bugun (' + bugun + ') ' + t + ' piyasasi icin yuksek olasilikli 5 trade firsati belirle.\n' + (liveCtx || '') + '\nAnaliz tipi: ' + tip + '\n' + (ctx ? 'Ek baglam: ' + ctx : '') + '\n\nHer trade icin hem teknik hem temel analiz perspektifinden mantigi acikla.\nSADECE JSON dondur:\n{\n  \"piyasa_ozet\": \"2-3 cumle bugunku piyasa gorünumu ve genel durum\",\n  \"tradeler\": [\n    {\n      \"no\": 1,\n      \"enstruman\": \"hisse/endeks/emtia adi\",\n      \"yon\": \"LONG\",\n      \"giris\": \"giris seviyesi\",\n      \"hedef1\": \"1. kar hedefi\",\n      \"hedef2\": \"2. kar hedefi\",\n      \"stop\": \"stop loss seviyesi\",\n      \"rr\": \"risk/odul orani ornek 1:2.5\",\n      \"olasilik\": \"yuksek/orta-yuksek/orta\",\n      \"teknik_mantik\": \"2-3 cumle teknik analiz gerekce\",\n      \"temel_mantik\": \"2-3 cumle temel analiz gerekce\",\n      \"sure\": \"intraday/swing/kisa vade\"\n    }\n  ],\n  \"risk_uyari\": \"genel risk uyarisi 1-2 cumle\"\n}\nTurkce yaz. 5 trade ver. Gercekci ve uygulanabilir seviyeler oner.');
 
     stopSpin(8);
     $('rl8').textContent=t+' — 5 Trade Fırsatı';
