@@ -839,10 +839,9 @@ async function m12(){
   const t=($('m12t').value||'').trim();
   const prof=$('m12prof').value;
   const ctx=$('m12ctx').value.trim();
-  if(!t)return alert('Piyasa veya varlık giriniz.');
+  if(!t)return alert('Piyasa veya varlik giriniz.');
   startSpin(12);
 
-  // Try to get live price first
   let liveCtx='';
   try{
     const ticker=t.toUpperCase().replace('BIST30','XU030.IS').replace('S&P500','^GSPC').replace('ALTIN','GC=F');
@@ -850,89 +849,26 @@ async function m12(){
     const m=d.meta,s=sym(m.currency);
     const pr=m.regularMarketPrice,prev=m.chartPreviousClose;
     const chg=((pr-prev)/prev*100).toFixed(2);
-    liveCtx=`GERÇEK ZAMANLI VERİ: Fiyat ${s}${fmtPr(pr)} (${chg>0?'+':''}${chg}%), Günlük yüksek/düşük: ${s}${fmtPr(m.regularMarketDayHigh)}/${s}${fmtPr(m.regularMarketDayLow)}, 52H yüksek/düşük: ${s}${fmtPr(m.fiftyTwoWeekHigh)}/${s}${fmtPr(m.fiftyTwoWeekLow)}`;
+    liveCtx=`Live data: Price ${s}${fmtPr(pr)} (${chg>0?'+':''}${chg}%), Day High/Low: ${s}${fmtPr(m.regularMarketDayHigh)}/${s}${fmtPr(m.regularMarketDayLow)}, 52W High/Low: ${s}${fmtPr(m.fiftyTwoWeekHigh)}/${s}${fmtPr(m.fiftyTwoWeekLow)}`;
   }catch(e){console.warn('Live data unavailable');}
 
   try{
     const bugun=new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
-    const j=await callClaude(`Deneyimli trading koçu olarak ${t} için bugün (${bugun}) kapsamlı günlük trading planı oluştur.
-Trader profili: ${prof}
-${liveCtx?liveCtx:''}
-${ctx?'Ek bağlam: '+ctx:''}
-
-SADECE JSON:
-{
-  "ozet": "2-3 cümle bugünkü piyasa özeti ve genel yaklaşım",
-  "piyasa_durumu": "yükselen/düşen/yatay/kararsız",
-  "risk_seviyesi": "düşük/orta/yüksek",
-  "pre_market": {
-    "saat": "08:00 – 09:30",
-    "baslik": "Pre-Market Tarama",
-    "gorevler": [
-      {"saat":"08:00","gorev":"görev açıklaması","detay":"neden ve nasıl yapılır"},
-      {"saat":"08:15","gorev":"görev","detay":"detay"},
-      {"saat":"08:30","gorev":"görev","detay":"detay"},
-      {"saat":"08:45","gorev":"görev","detay":"detay"},
-      {"saat":"09:00","gorev":"görev","detay":"detay"},
-      {"saat":"09:15","gorev":"görev","detay":"detay"}
-    ]
-  },
-  "acilis": {
-    "saat": "09:30 – 11:00",
-    "baslik": "Açılış Stratejisi",
-    "gorevler": [
-      {"saat":"09:30","gorev":"görev","detay":"detay"},
-      {"saat":"09:35","gorev":"görev","detay":"detay"},
-      {"saat":"09:45","gorev":"görev","detay":"detay"},
-      {"saat":"10:00","gorev":"görev","detay":"detay"},
-      {"saat":"10:30","gorev":"görev","detay":"detay"}
-    ],
-    "giris_kosullari": ["giriş koşulu 1","giriş koşulu 2","giriş koşulu 3"],
-    "kacin_kosullari": ["kaçınılacak durum 1","kaçınılacak durum 2"]
-  },
-  "gun_ortasi": {
-    "saat": "11:00 – 14:30",
-    "baslik": "Gün Ortası Pozisyon Güncellemeleri",
-    "gorevler": [
-      {"saat":"11:00","gorev":"görev","detay":"detay"},
-      {"saat":"12:00","gorev":"görev","detay":"detay"},
-      {"saat":"13:00","gorev":"görev","detay":"detay"},
-      {"saat":"14:00","gorev":"görev","detay":"detay"}
-    ],
-    "pozisyon_kurallari": ["kural 1","kural 2","kural 3"]
-  },
-  "kapanis": {
-    "saat": "14:30 – 18:00",
-    "baslik": "Kapanış Yaklaşımı",
-    "gorevler": [
-      {"saat":"14:30","gorev":"görev","detay":"detay"},
-      {"saat":"15:30","gorev":"görev","detay":"detay"},
-      {"saat":"16:30","gorev":"görev","detay":"detay"},
-      {"saat":"17:00","gorev":"görev","detay":"detay"},
-      {"saat":"17:30","gorev":"görev","detay":"detay"}
-    ]
-  },
-  "gunden_sonra": {
-    "baslik": "Gün Sonu Değerlendirme",
-    "gorevler": ["görev 1","görev 2","görev 3"]
-  },
-  "kritik_seviyeler": {
-    "destek": ["seviye 1","seviye 2"],
-    "direnc": ["seviye 1","seviye 2"],
-    "pivot": "pivot seviyesi"
-  },
-  "gun_kurallari": ["altın kural 1","altın kural 2","altın kural 3","altın kural 4"],
-  "max_islem": "bugün maksimum kaç işlem yapılmalı",
-  "risk_limiti": "günlük maksimum kayıp limiti önerisi"
-}
-Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) saatiyle':'yerel saatle'} olsun.`);
+    const r=await fetch('/api/trading_plan',{
+      method:'POST',
+      headers:{'Content-Type':'application/json'},
+      body:JSON.stringify({market:t,profile:prof,context:ctx,live:liveCtx,date:bugun})
+    });
+    const data=await r.json();
+    if(!r.ok||data.error)throw new Error(data.error||'Sunucu hatasi');
+    const j=data.result;
 
     stopSpin(12);
     const tarih=new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
-    $('rl12').textContent=t.toUpperCase()+' — Günlük Trading Planı · '+tarih;
+    $('rl12').textContent=t.toUpperCase()+' — Gunluk Trading Plani · '+tarih;
 
-    const durumColor=d=>d==='yükselen'?'var(--green)':d==='düşen'?'var(--red)':'var(--gold2)';
-    const riskColor=r=>r==='yüksek'?'var(--red)':r==='orta'?'var(--gold2)':'var(--green)';
+    const durumColor=d=>d==='yukselen'?'var(--green)':d==='dusen'?'var(--red)':'var(--gold2)';
+    const riskColor=r=>r==='yuksek'?'var(--red)':r==='orta'?'var(--gold2)':'var(--green)';
     let checkIdx=0;
 
     function buildSection(sec, color, icon){
@@ -948,9 +884,9 @@ Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) 
       (sec.gorevler||[]).forEach(g=>{
         const id='chk'+checkIdx++;
         const saat=g.saat||'';
-        const gorev=g.gorev||g||'';
+        const gorev=typeof g==='string'?g:(g.gorev||'');
         const detay=g.detay||'';
-        h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')" style="margin-bottom:5px;border-left:2px solid ${color}30">
+        h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')" style="margin-bottom:5px;border-left:2px solid ${color}40">
           <div class="cb" id="cb_${id}"></div>
           <div style="flex:1">
             <div style="display:flex;align-items:center;gap:8px">
@@ -963,20 +899,20 @@ Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) 
       });
       if(sec.giris_kosullari?.length){
         h+=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Giriş Koşulları</div>`;
-        sec.giris_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--green)">✓</span>${k}</div>`;});
+          <div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Giris Kosullari</div>`;
+        sec.giris_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--green)">+</span>${k}</div>`;});
         h+=`</div>`;
       }
       if(sec.kacin_kosullari?.length){
         h+=`<div style="margin-top:8px">
-          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Kaçınılacak Durumlar</div>`;
-        sec.kacin_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--red)">✗</span>${k}</div>`;});
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Kacin</div>`;
+        sec.kacin_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--red)">x</span>${k}</div>`;});
         h+=`</div>`;
       }
       if(sec.pozisyon_kurallari?.length){
         h+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
-          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Pozisyon Kuralları</div>`;
-        sec.pozisyon_kurallari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--gold)">◆</span>${k}</div>`;});
+          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Pozisyon Kurallari</div>`;
+        sec.pozisyon_kurallari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--gold)">*</span>${k}</div>`;});
         h+=`</div>`;
       }
       h+=`</div>`;
@@ -984,48 +920,36 @@ Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) 
     }
 
     let h='';
-    // TOP SUMMARY BAR
     h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:1.5rem">
-      <div class="mc" style="grid-column:span 2"><div class="mc-l">Bugünkü Özet</div><div style="font-size:13px;color:var(--text);line-height:1.6;margin-top:4px">${j.ozet}</div></div>
+      <div class="mc" style="grid-column:span 2"><div class="mc-l">Bugunun Ozeti</div><div style="font-size:13px;color:var(--text);line-height:1.6;margin-top:4px">${j.ozet||''}</div></div>
       <div class="mc"><div class="mc-l">Piyasa Durumu</div><div class="mc-v" style="color:${durumColor(j.piyasa_durumu)};font-size:14px;text-transform:capitalize">${j.piyasa_durumu||'—'}</div></div>
       <div class="mc"><div class="mc-l">Risk Seviyesi</div><div class="mc-v" style="color:${riskColor(j.risk_seviyesi)};font-size:14px;text-transform:capitalize">${j.risk_seviyesi||'—'}</div></div>
     </div>`;
 
-    // KRİTİK SEVİYELER
     const kl=j.kritik_seviyeler||{};
     h+=`<div class="card" style="margin-bottom:1rem">
       <div class="card-t">Kritik Fiyat Seviyeleri</div>
-      <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
-        <div>
-          <div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Destekler</div>
-          <div style="display:flex;gap:6px">${(kl.destek||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:6px;color:var(--green)">${d}</span>`).join('')}</div>
-        </div>
-        <div>
-          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Dirençler</div>
-          <div style="display:flex;gap:6px">${(kl.direnc||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:6px;color:var(--red)">${d}</span>`).join('')}</div>
-        </div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap;align-items:flex-start">
+        <div><div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Destekler</div>
+        <div style="display:flex;gap:6px">${(kl.destek||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:6px;color:var(--green)">${d}</span>`).join('')}</div></div>
+        <div><div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Direncler</div>
+        <div style="display:flex;gap:6px">${(kl.direnc||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:6px;color:var(--red)">${d}</span>`).join('')}</div></div>
         ${kl.pivot?`<div><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Pivot</div><span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--gold3);border:1px solid rgba(201,168,76,.2);border-radius:6px;color:var(--gold2)">${kl.pivot}</span></div>`:''}
-        <div style="margin-left:auto;text-align:right">
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Maks. İşlem</div>
-          <div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--gold2)">${j.max_islem||'—'}</div>
-        </div>
-        <div style="text-align:right">
-          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Risk Limiti</div>
-          <div style="font-size:13px;color:var(--red)">${j.risk_limiti||'—'}</div>
-        </div>
+        <div style="margin-left:auto;text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Maks. Islem</div>
+        <div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--gold2)">${j.max_islem||'—'}</div></div>
+        <div style="text-align:right"><div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Risk Limiti</div>
+        <div style="font-size:13px;color:var(--red)">${j.risk_limiti||'—'}</div></div>
       </div>
     </div>`;
 
-    // 4 CHECKLIST SECTIONS
-    h+=buildSection(j.pre_market,  '#4a9eff', '🔍');
-    h+=buildSection(j.acilis,      '#3fb87f', '🚀');
-    h+=buildSection(j.gun_ortasi,  '#c9a84c', '⚖️');
-    h+=buildSection(j.kapanis,     '#e05555', '🎯');
+    h+=buildSection(j.pre_market,'#4a9eff','🔍');
+    h+=buildSection(j.acilis,'#3fb87f','🚀');
+    h+=buildSection(j.gun_ortasi,'#c9a84c','⚖');
+    h+=buildSection(j.kapanis,'#e05555','🎯');
 
-    // GÜN SONU
     if(j.gunden_sonra?.gorevler?.length){
       h+=`<div class="card" style="margin-bottom:1rem">
-        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">📋 ${j.gunden_sonra.baslik||'Gün Sonu Değerlendirme'}</div>`;
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">📋 ${j.gunden_sonra.baslik||'Gun Sonu'}</div>`;
       j.gunden_sonra.gorevler.forEach(g=>{
         const id='chk'+checkIdx++;
         h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')" style="margin-bottom:5px">
@@ -1036,9 +960,8 @@ Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) 
       h+=`</div>`;
     }
 
-    // ALTIN KURALLAR
     h+=`<div class="card" style="border-color:rgba(201,168,76,.25)">
-      <div class="card-t" style="color:var(--gold)">Altın Kurallar</div>`;
+      <div class="card-t" style="color:var(--gold)">Altin Kurallar</div>`;
     (j.gun_kurallari||[]).forEach((k,i)=>{
       h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
         <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);min-width:24px;padding-top:1px">${String(i+1).padStart(2,'0')}</span>
@@ -1047,24 +970,22 @@ Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) 
     });
     h+=`</div>`;
 
-    // PROGRESS COUNTER
     h+=`<div style="margin-top:1.5rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:space-between">
-      <div style="font-size:13px;color:var(--muted2)">Checklist İlerlemesi</div>
-      <div id="progressBar" style="font-family:'DM Mono',monospace;font-size:14px;color:var(--gold2)">0 / 0 tamamlandı</div>
+      <div style="font-size:13px;color:var(--muted2)">Checklist Ilerlemesi</div>
+      <div id="progressBar" style="font-family:'DM Mono',monospace;font-size:14px;color:var(--gold2)">0 / 0 tamamlandi</div>
     </div>`;
 
     $('rc12').innerHTML=h;
     $('res12').style.display='block';
 
-    // Update progress on each click
     const total=document.querySelectorAll('#rc12 .cl-item').length;
-    document.getElementById('progressBar').textContent=`0 / ${total} tamamlandı`;
+    document.getElementById('progressBar').textContent='0 / '+total+' tamamlandi';
     document.querySelectorAll('#rc12 .cl-item').forEach(el=>{
       el.addEventListener('click',()=>{
         setTimeout(()=>{
           const done=document.querySelectorAll('#rc12 .cb.chk').length;
           const pct=Math.round(done/total*100);
-          document.getElementById('progressBar').textContent=`${done} / ${total} tamamlandı (${pct}%)`;
+          document.getElementById('progressBar').textContent=done+' / '+total+' tamamlandi ('+pct+'%)';
           document.getElementById('progressBar').style.color=pct===100?'var(--green)':'var(--gold2)';
         },50);
       });
