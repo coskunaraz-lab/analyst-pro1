@@ -198,28 +198,42 @@ def run_backtest(bars, strategy, params):
     return {'trades': recent, 'metrics': metrics, 'equity': eq_curve[-50:]}
 
 def sanitize_json_string(raw):
+    import re
     raw = raw.strip()
+    # Remove markdown fences
     for fence in ['```json', '```']:
         if raw.startswith(fence): raw = raw[len(fence):]
     if raw.endswith('```'): raw = raw[:-3]
     raw = raw.strip()
+    # Try direct parse
     try: return json.loads(raw)
     except: pass
+    # Extract JSON object
     start = raw.find('{'); end = raw.rfind('}')
     if start >= 0 and end > start:
-        try: return json.loads(raw[start:end+1])
+        candidate = raw[start:end+1]
+        try: return json.loads(candidate)
         except: pass
-    replacements = [('\u201c','"'),('\u201d','"'),('\u2018',"'"),('\u2019',"'"),('\u201e','"'),('\u201f','"')]
-    fixed = raw
-    for o, n in replacements: fixed = fixed.replace(o, n)
-    start = fixed.find('{'); end = fixed.rfind('}')
-    if start >= 0 and end > start:
-        try: return json.loads(fixed[start:end+1])
-        except json.JSONDecodeError as e: raise Exception(f'JSON parse error: {e} — {raw[:200]}')
-    raise Exception(f'No valid JSON found. Response: {raw[:200]}')
+        # Fix smart quotes
+        for o, n in [('\u201c','"'),('\u201d','"'),('\u2018',"'"),('\u2019',"'"),
+                     ('\u201e','"'),('\u201f','"'),('"','"'),('"','"'),('\u2013','-'),('\u2014','-')]:
+            candidate = candidate.replace(o, n)
+        try: return json.loads(candidate)
+        except: pass
+        # Remove control characters
+        candidate = re.sub(r'[\x00-\x1f\x7f]', ' ', candidate)
+        try: return json.loads(candidate)
+        except json.JSONDecodeError as e:
+            raise Exception(f'JSON parse error: {e} — snippet: {candidate[max(0,e.pos-50):e.pos+50]}')
+    raise Exception(f'No valid JSON. Response starts: {raw[:300]}')
 
 def call_claude(prompt):
-    body = json.dumps({"model": "claude-sonnet-4-20250514", "max_tokens": 2000, "messages": [{"role": "user", "content": prompt}]}).encode('utf-8')
+    body = json.dumps({
+        "model": "claude-sonnet-4-20250514",
+        "max_tokens": 3000,
+        "system": "You are a financial analyst API. You ALWAYS respond with valid JSON only. Never use special characters inside JSON string values that would break JSON parsing (no unescaped quotes, no newlines inside strings). Escape any quotes inside strings with backslash. Keep all text in Turkish but ensure the JSON structure is valid.",
+        "messages": [{"role": "user", "content": prompt}]
+    }).encode('utf-8')
     req = Request('https://api.anthropic.com/v1/messages', data=body,
         headers={'Content-Type': 'application/json', 'x-api-key': API_KEY, 'anthropic-version': '2023-06-01'}, method='POST')
     try:
