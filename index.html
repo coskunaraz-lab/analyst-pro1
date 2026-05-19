@@ -154,12 +154,42 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
   .fr2,.g2,.srow,.rgrid,.tlev,.fr3,.g3{grid-template-columns:1fr}
   .lh-grid{grid-template-columns:repeat(3,1fr)}
 }
+
+  /* Light mode overrides */
+  body.light {
+    --bg:#f4f2ed;
+    --bg2:#ffffff;
+    --bg3:#f0ede6;
+    --bg4:#e8e5de;
+    --border:rgba(0,0,0,0.08);
+    --border2:rgba(0,0,0,0.15);
+    --text:#1a1a1c;
+    --muted:#9a9896;
+    --muted2:#5a5856;
+    --gold:#9a6f1a;
+    --gold2:#7a5210;
+    --gold3:rgba(154,111,26,0.1);
+    --green:#1a7a52;
+    --green2:rgba(26,122,82,0.1);
+    --red:#c03030;
+    --red2:rgba(192,48,48,0.08);
+    --blue:#1a6abf;
+    --blue2:rgba(26,106,191,0.08);
+  }
+  body.light .sidebar { box-shadow: 2px 0 12px rgba(0,0,0,0.06); }
+  body.light .live-pill { background:rgba(26,122,82,0.12); }
+  body.light .chip:hover { background: var(--bg2); }
+  body.light .lh-stat { background: var(--bg3); }
+  body.light .mc { background: var(--bg3); }
 </style>
 </head>
 <body>
 <aside class="sidebar">
   <div class="logo">
-    <div class="logo-mark">Analyst Pro</div>
+    <div style="display:flex;align-items:center;justify-content:space-between">
+      <div class="logo-mark">Analyst Pro</div>
+      <button id="themeBtn" onclick="toggleTheme()" title="Tema değiştir" style="background:none;border:none;cursor:pointer;padding:4px;border-radius:6px;display:flex;align-items:center;color:var(--muted2);font-size:16px;transition:color .15s" onmouseover="this.style.color='var(--gold2)'" onmouseout="this.style.color='var(--muted2)'">☀</button>
+    </div>
     <div class="logo-sub">Yatırım Platformu</div>
     <div class="live-pill"><span class="live-dot"></span>Yahoo Finance Canlı</div>
   </div>
@@ -172,6 +202,11 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div class="nav-item" onclick="showMod(5,this)"><span class="nav-num">05</span>Sektör Fırsatı</div>
     <div class="nav-item" onclick="showMod(6,this)"><span class="nav-num">06</span>Araştırma Listesi</div>
     <div class="nav-item" onclick="showMod(7,this)"><span class="nav-num">07</span>Bileşik Getiri</div>
+    <div class="nav-item" onclick="showMod(8,this)"><span class="nav-num">08</span>Trade Fırsatları</div>
+    <div class="nav-item" onclick="showMod(9,this)"><span class="nav-num">09</span>Teknik Analiz</div>
+    <div class="nav-item" onclick="showMod(10,this)"><span class="nav-num">10</span>Haber Analizi</div>
+    <div class="nav-item" onclick="showMod(11,this)"><span class="nav-num">11</span>Strateji Backtest</div>
+    <div class="nav-item" onclick="showMod(12,this)"><span class="nav-num">12</span>Günlük Plan</div>
   </nav>
   <div class="sidebar-ft">Yatırım tavsiyesi değildir.<br>Eğitim amaçlıdır.</div>
 </aside>
@@ -194,6 +229,20 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
       <div class="lh-stat"><div class="ls-l">52H Yüksek</div><div class="ls-v" id="lh1_hi">—</div></div>
       <div class="lh-stat"><div class="ls-l">52H Düşük</div><div class="ls-v" id="lh1_lo">—</div></div>
       <div class="lh-stat"><div class="ls-l">Temettü %</div><div class="ls-v" id="lh1_div">—</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:8px">
+      <div class="lh-stat"><div class="ls-l">ROE</div><div class="ls-v" id="lh1_roe">—</div></div>
+      <div class="lh-stat"><div class="ls-l">ROA</div><div class="ls-v" id="lh1_roa">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Net Marj</div><div class="ls-v" id="lh1_nm">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Faaliyet Marjı</div><div class="ls-v" id="lh1_om">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Borç/Özsermaye</div><div class="ls-v" id="lh1_de">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Likit Oran</div><div class="ls-v" id="lh1_qr">—</div></div>
+    </div>
+    <div style="display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:8px">
+      <div class="lh-stat"><div class="ls-l">Brüt Marj</div><div class="ls-v" id="lh1_gm">—</div></div>
+      <div class="lh-stat"><div class="ls-l">FD/FAVÖK</div><div class="ls-v" id="lh1_ev">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Gelir (TTM)</div><div class="ls-v" id="lh1_rev">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Serbest Nakit Akışı</div><div class="ls-v" id="lh1_fcf">—</div></div>
     </div>
     <div class="lh-ts" id="lh1_ts">—</div>
   </div>
@@ -345,10 +394,178 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
   <div class="spin-wrap" id="spin7"><div class="spinner"></div><p class="spin-msg" id="sm7">Şirketler taranıyor...</p></div>
   <div class="res-wrap" id="res7"><div class="res-lbl" id="rl7">—</div><div id="rc7"></div></div>
 </div>
+
+<!-- MOD 8 -->
+<div class="module" id="mod8">
+  <div class="mod-tag">Modül 08</div>
+  <div class="mod-title">Günlük Trade Fırsatları</div>
+  <div class="mod-desc">Seçtiğiniz piyasa için yüksek olasılıklı 5 trade fırsatı — giriş, hedef, stop ve risk/ödül oranıyla.</div>
+  <div class="fr2">
+    <div class="fg"><label class="fl">Piyasa / Hisse / Endeks</label><input class="fi mono" id="m8t" placeholder="BIST30, S&P500, NVDA, THYAO.IS..." onkeydown="if(event.key==='Enter')run(8)"></div>
+    <div class="fg"><label class="fl">Analiz Tipi</label><select class="fi" id="m8tip">
+      <option value="teknik ve temel">Teknik + Temel</option>
+      <option value="teknik">Sadece Teknik</option>
+      <option value="temel">Sadece Temel</option>
+    </select></div>
+  </div>
+  <div class="fg"><label class="fl">Ek Bağlam (opsiyonel)</label><input class="fi" id="m8ctx" placeholder="Örn: Fed toplantısı yaklaşıyor, BIST rekor kırdı, enflasyon verisi açıklandı..."></div>
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m8t','BIST30')">BIST30</span>
+    <span class="chip" onclick="sv('m8t','S&P500')">S&P500</span>
+    <span class="chip" onclick="sv('m8t','NASDAQ')">NASDAQ</span>
+    <span class="chip" onclick="sv('m8t','NVDA')">NVDA</span>
+    <span class="chip" onclick="sv('m8t','THYAO.IS')">THYAO</span>
+    <span class="chip" onclick="sv('m8t','ALTIN')">Altın</span>
+  </div>
+  <button class="btn" id="btn8" onclick="run(8)">Fırsatları Bul →</button>
+  <div class="err-box" id="err8"></div>
+  <div class="spin-wrap" id="spin8"><div class="spinner"></div><p class="spin-msg" id="sm8">Piyasa taranıyor...</p></div>
+  <div class="res-wrap" id="res8"><div class="res-lbl" id="rl8">—</div><div id="rc8"></div></div>
+</div>
+<!-- MOD 9 -->
+<div class="module" id="mod9">
+  <div class="mod-tag">Modül 09</div>
+  <div class="mod-title">Teknik Analiz & Sinyal</div>
+  <div class="mod-desc">Günlük ve haftalık zaman diliminde destek/direnç, trend, hareketli ortalamalar ve momentum — net AL/TUT/SAT sinyaliyle.</div>
+  <div class="live-hdr" id="lh9">
+    <div class="lh-top">
+      <div><div class="lh-name" id="lh9_name">—</div><div style="margin-top:5px"><span class="lh-tag" id="lh9_ticker">—</span></div></div>
+      <div style="margin-left:auto;text-align:right"><div class="lh-price" id="lh9_price">—</div><div class="lh-chg" id="lh9_chg">—</div></div>
+    </div>
+    <div class="lh-grid">
+      <div class="lh-stat"><div class="ls-l">Günlük Yüksek</div><div class="ls-v" id="lh9_dhi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Günlük Düşük</div><div class="ls-v" id="lh9_dlo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Yüksek</div><div class="ls-v" id="lh9_hi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Düşük</div><div class="ls-v" id="lh9_lo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Hacim</div><div class="ls-v" id="lh9_vol">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Ort. Hacim</div><div class="ls-v" id="lh9_avol">—</div></div>
+    </div>
+    <div class="lh-ts" id="lh9_ts">—</div>
+  </div>
+  <div class="fg"><label class="fl">Hisse Kodu</label>
+    <input class="fi mono" id="m9t" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(9)">
+  </div>
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m9t','AAPL')">AAPL</span>
+    <span class="chip" onclick="sv('m9t','NVDA')">NVDA</span>
+    <span class="chip" onclick="sv('m9t','MSFT')">MSFT</span>
+    <span class="chip" onclick="sv('m9t','TSLA')">TSLA</span>
+    <span class="chip" onclick="sv('m9t','THYAO.IS')">THYAO</span>
+    <span class="chip" onclick="sv('m9t','ASELS.IS')">ASELS</span>
+  </div>
+  <button class="btn" id="btn9" onclick="run(9)">Analizi Başlat →</button>
+  <div class="err-box" id="err9"></div>
+  <div class="spin-wrap" id="spin9"><div class="spinner"></div><p class="spin-msg" id="sm9">Teknik veriler analiz ediliyor...</p></div>
+  <div class="res-wrap" id="res9"><div class="res-lbl" id="rl9">—</div><div id="rc9"></div></div>
+</div>
+<!-- MOD 10 -->
+<div class="module" id="mod10">
+  <div class="mod-tag">Modül 10</div>
+  <div class="mod-title">Haber & Sentiment Analizi</div>
+  <div class="mod-desc">Güncel haber akışını çek, trade fırsatına dönüştür — kısa/uzun vadeli etki, fiyat aralığı ve piyasa psikolojisi.</div>
+  <div class="fg"><label class="fl">Şirket / Sektör / Konu</label>
+    <input class="fi mono" id="m10t" placeholder="NVDA, Apple, yapay zeka sektörü, altın..." onkeydown="if(event.key==='Enter')run(10)">
+  </div>
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m10t','NVDA')">NVDA</span>
+    <span class="chip" onclick="sv('m10t','AAPL')">AAPL</span>
+    <span class="chip" onclick="sv('m10t','TSLA')">TSLA</span>
+    <span class="chip" onclick="sv('m10t','THYAO')">THYAO</span>
+    <span class="chip" onclick="sv('m10t','artificial intelligence sector')">AI Sektörü</span>
+    <span class="chip" onclick="sv('m10t','gold commodity')">Altın</span>
+    <span class="chip" onclick="sv('m10t','Bitcoin crypto')">Bitcoin</span>
+  </div>
+  <button class="btn" id="btn10" onclick="run(10)">Haberleri Analiz Et →</button>
+  <div class="err-box" id="err10"></div>
+  <div class="spin-wrap" id="spin10"><div class="spinner"></div><p class="spin-msg" id="sm10">Haberler çekiliyor...</p></div>
+  <div class="res-wrap" id="res10"><div class="res-lbl" id="rl10">—</div><div id="rc10"></div></div>
+</div>
+<!-- MOD 11 -->
+<div class="module" id="mod11">
+  <div class="mod-tag">Modül 11</div>
+  <div class="mod-title">Strateji Backtester</div>
+  <div class="mod-desc">Yahoo Finance'tan gerçek tarihsel veri çekerek stratejiyi test et — kazanma oranı, profit factor, max drawdown ve AI optimizasyon önerileri.</div>
+
+  <div class="fr2">
+    <div class="fg"><label class="fl">Hisse Kodu</label>
+      <input class="fi mono" id="m11t" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12">
+    </div>
+    <div class="fg"><label class="fl">Test Periyodu</label>
+      <select class="fi" id="m11per">
+        <option value="6mo">6 Ay</option>
+        <option value="1y">1 Yıl</option>
+        <option value="2y" selected>2 Yıl</option>
+        <option value="5y">5 Yıl</option>
+      </select>
+    </div>
+  </div>
+
+  <div class="fg"><label class="fl">Strateji</label>
+    <select class="fi" id="m11strat" onchange="updateParams()">
+      <option value="sma_cross">SMA Kesişimi (Golden/Death Cross)</option>
+      <option value="ema_cross">EMA Kesişimi</option>
+      <option value="rsi_ob_os">RSI Aşırı Alım/Satım</option>
+      <option value="macd_cross">MACD Sinyal Kesişimi</option>
+      <option value="bollinger_bounce">Bollinger Band Geri Dönüşü</option>
+      <option value="rsi_divergence">RSI Uyumsuzluğu (Divergence)</option>
+    </select>
+  </div>
+
+  <div id="paramsBox" style="background:var(--bg3);border:1px solid var(--border);border-radius:8px;padding:1rem;margin-bottom:1rem">
+    <div style="font-size:10.5px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:10px">Strateji Parametreleri</div>
+    <div id="paramFields" class="fr3"></div>
+  </div>
+
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m11t','AAPL')">AAPL</span>
+    <span class="chip" onclick="sv('m11t','NVDA')">NVDA</span>
+    <span class="chip" onclick="sv('m11t','TSLA')">TSLA</span>
+    <span class="chip" onclick="sv('m11t','THYAO.IS')">THYAO</span>
+    <span class="chip" onclick="sv('m11t','ASELS.IS')">ASELS</span>
+  </div>
+  <button class="btn" id="btn11" onclick="run(11)">Backtest Çalıştır →</button>
+  <div class="err-box" id="err11"></div>
+  <div class="spin-wrap" id="spin11"><div class="spinner"></div><p class="spin-msg" id="sm11">Tarihsel veri çekiliyor...</p></div>
+  <div class="res-wrap" id="res11"><div class="res-lbl" id="rl11">—</div><div id="rc11"></div></div>
+</div>
+<!-- MOD 12 -->
+<div class="module" id="mod12">
+  <div class="mod-tag">Modül 12</div>
+  <div class="mod-title">Günlük Trading Planı</div>
+  <div class="mod-desc">Saat bazlı, adım adım takip edilebilir checklist — pre-market tarama, açılış stratejisi, gün ortası güncellemeler ve kapanış yaklaşımı.</div>
+
+  <div class="fr2">
+    <div class="fg"><label class="fl">Piyasa / Varlık</label>
+      <input class="fi mono" id="m12t" placeholder="BIST30, S&P500, NVDA, THYAO.IS..." onkeydown="if(event.key==='Enter')run(12)">
+    </div>
+    <div class="fg"><label class="fl">Trader Profili</label>
+      <select class="fi" id="m12prof">
+        <option value="gun ici trader (scalper/day trader)">Gün İçi Trader (Day/Scalp)</option>
+        <option value="swing trader (2-5 gun)">Swing Trader (2-5 gün)</option>
+        <option value="pozisyon trader (haftalik)">Pozisyon Trader (Haftalık)</option>
+      </select>
+    </div>
+  </div>
+  <div class="fg"><label class="fl">Ek Bağlam (opsiyonel)</label>
+    <input class="fi" id="m12ctx" placeholder="Örn: Fed kararı bu hafta, enflasyon verisi açıklanacak, hisse dün %5 düştü...">
+  </div>
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m12t','BIST30')">BIST30</span>
+    <span class="chip" onclick="sv('m12t','S&P500')">S&P500</span>
+    <span class="chip" onclick="sv('m12t','NVDA')">NVDA</span>
+    <span class="chip" onclick="sv('m12t','THYAO.IS')">THYAO</span>
+    <span class="chip" onclick="sv('m12t','AAPL')">AAPL</span>
+    <span class="chip" onclick="sv('m12t','ALTIN')">Altın</span>
+  </div>
+  <button class="btn" id="btn12" onclick="run(12)">Plan Oluştur →</button>
+  <div class="err-box" id="err12"></div>
+  <div class="spin-wrap" id="spin12"><div class="spinner"></div><p class="spin-msg" id="sm12">Günlük plan hazırlanıyor...</p></div>
+  <div class="res-wrap" id="res12"><div class="res-lbl" id="rl12">—</div><div id="rc12"></div></div>
+</div>
 </main>
 
 <script>
-const BASE = 'http://localhost:8765';
+const BASE = window.location.origin;
 const spinT = {
   1:['Yahoo Finance\'tan veri çekiliyor...','Finansal metrikler analiz ediliyor...','Rekabet değerlendiriliyor...','Senaryo oluşturuluyor...'],
   2:['Gerçek zamanlı fiyat alınıyor...','Teknik seviyeler hesaplanıyor...','Risk-ödül belirleniyor...'],
@@ -356,7 +573,12 @@ const spinT = {
   4:['Hisse verileri tek tek çekiliyor...','Sektör dağılımı hesaplanıyor...','Korelasyon analizi yapılıyor...'],
   5:['Makro değerlendiriliyor...','Sektör fırsatları taranıyor...','Şirket önerileri oluşturuluyor...'],
   6:['Şirket profili inceleniyor...','Kontrol listesi oluşturuluyor...'],
-  7:['Referans analiz ediliyor...','Benzer şirketler taranıyor...','Yatırım tezleri hazırlanıyor...']
+  7:['Referans analiz ediliyor...','Benzer şirketler taranıyor...','Yatırım tezleri hazırlanıyor...'],
+  8:['Piyasa taranıyor...','Trade fırsatları belirleniyor...','Giriş ve hedef seviyeleri hesaplanıyor...','Risk/ödül oranları değerlendiriliyor...'],
+  9:['Yahoo Finance\'tan fiyat verisi çekiliyor...','Destek ve direnç seviyeleri hesaplanıyor...','Hareketli ortalamalar analiz ediliyor...','Sinyal üretiliyor...'],
+  10:['Güncel haberler çekiliyor...','Haber akışı analiz ediliyor...','Piyasa psikolojisi değerlendiriliyor...','Trade fırsatları oluşturuluyor...'],
+  11:['Yahoo Finance\'tan tarihsel veri çekiliyor...','Strateji sinyalleri hesaplanıyor...','Trade sonuçları hesaplanıyor...','AI optimizasyon önerileri oluşturuluyor...'],
+  12:['Piyasa takvimi kontrol ediliyor...','Pre-market analiz hazırlanıyor...','Saat bazlı plan oluşturuluyor...','Checklist formatına dönüştürülüyor...']
 };
 let spInt={};
 const $=id=>document.getElementById(id);
@@ -401,7 +623,25 @@ function fillHeader(pfx,meta,sum){
   cel.textContent=(chg>=0?'+':'')+fmtPr(chg)+' ('+(chg>=0?'+':'')+chgP.toFixed(2)+'%)';
   cel.className='lh-chg '+(chg>=0?'up':'dn');
   // header-specific stats
-  if($(pfx+'_mc')){$(pfx+'_mc').textContent=fmtN(price$.marketCap?.raw);$(pfx+'_pe').textContent=fmtN(sd.trailingPE?.raw,1);$(pfx+'_pb').textContent=fmtN(ks.priceToBook?.raw,1);$(pfx+'_hi').textContent=s+fmtPr(sd.fiftyTwoWeekHigh?.raw||meta.fiftyTwoWeekHigh);$(pfx+'_lo').textContent=s+fmtPr(sd.fiftyTwoWeekLow?.raw||meta.fiftyTwoWeekLow);$(pfx+'_div').textContent=sd.dividendYield?.raw?fmtP(sd.dividendYield.raw):'—';}
+  if($(pfx+'_mc')){
+    $(pfx+'_mc').textContent=fmtN(price$.marketCap?.raw);
+    $(pfx+'_pe').textContent=fmtN(sd.trailingPE?.raw,1);
+    $(pfx+'_pb').textContent=fmtN(ks.priceToBook?.raw,1);
+    $(pfx+'_hi').textContent=s+fmtPr(sd.fiftyTwoWeekHigh?.raw||meta.fiftyTwoWeekHigh);
+    $(pfx+'_lo').textContent=s+fmtPr(sd.fiftyTwoWeekLow?.raw||meta.fiftyTwoWeekLow);
+    $(pfx+'_div').textContent=sd.dividendYield?.raw?fmtP(sd.dividendYield.raw):'—';
+    // new ratios
+    if($(pfx+'_roe')) $(pfx+'_roe').textContent=fd.returnOnEquity?.raw!=null?fmtP(fd.returnOnEquity.raw):'—';
+    if($(pfx+'_roa')) $(pfx+'_roa').textContent=fd.returnOnAssets?.raw!=null?fmtP(fd.returnOnAssets.raw):'—';
+    if($(pfx+'_nm'))  $(pfx+'_nm').textContent=fd.profitMargins?.raw!=null?fmtP(fd.profitMargins.raw):'—';
+    if($(pfx+'_om'))  $(pfx+'_om').textContent=fd.operatingMargins?.raw!=null?fmtP(fd.operatingMargins.raw):'—';
+    if($(pfx+'_gm'))  $(pfx+'_gm').textContent=fd.grossMargins?.raw!=null?fmtP(fd.grossMargins.raw):'—';
+    if($(pfx+'_de'))  $(pfx+'_de').textContent=ks.debtToEquity?.raw!=null?fmtN(ks.debtToEquity.raw,2):'—';
+    if($(pfx+'_qr'))  $(pfx+'_qr').textContent=fd.quickRatio?.raw!=null?fmtN(fd.quickRatio.raw,2):'—';
+    if($(pfx+'_ev'))  $(pfx+'_ev').textContent=ks.enterpriseToEbitda?.raw!=null?fmtN(ks.enterpriseToEbitda.raw,1):'—';
+    if($(pfx+'_rev')) $(pfx+'_rev').textContent=fmtN(fd.totalRevenue?.raw);
+    if($(pfx+'_fcf')) $(pfx+'_fcf').textContent=fmtN(fd.freeCashflow?.raw);
+  }
   if($(pfx+'_dhi')){$(pfx+'_dhi').textContent=s+fmtPr(meta.regularMarketDayHigh);$(pfx+'_dlo').textContent=s+fmtPr(meta.regularMarketDayLow);$(pfx+'_hi').textContent=s+fmtPr(meta.fiftyTwoWeekHigh||sd.fiftyTwoWeekHigh?.raw);$(pfx+'_lo').textContent=s+fmtPr(meta.fiftyTwoWeekLow||sd.fiftyTwoWeekLow?.raw);$(pfx+'_vol').textContent=fmtN(meta.regularMarketVolume,0);$(pfx+'_avol').textContent=fmtN(sd.averageVolume?.raw,0);}
   if($(pfx+'_rev')){$(pfx+'_rev').textContent=fmtN(fd.totalRevenue?.raw);$(pfx+'_gm').textContent=fmtP(fd.grossMargins?.raw);$(pfx+'_nm').textContent=fmtP(fd.profitMargins?.raw);$(pfx+'_eps').textContent=fmtN(ks.trailingEps?.raw,2);}
   $(pfx+'_ts').textContent='Son güncelleme: '+new Date().toLocaleTimeString('tr-TR')+' · Yahoo Finance';
@@ -427,10 +667,12 @@ async function m1(){
   try{
     const fd=live?.summary?.financialData||{},sd=live?.summary?.summaryDetail||{},ks=live?.summary?.defaultKeyStatistics||{},pr=live?.summary?.price||{},s=sym(live?.meta?.currency);
     const ctx=lok?`GERÇEK ZAMANLI VERİLER (Yahoo Finance):
-Şirket: ${pr.longName||t} | Fiyat: ${s}${fmtPr(live.meta.regularMarketPrice)} | Piyasa Değeri: ${fmtN(pr.marketCap?.raw)}
-F/K: ${fmtN(sd.trailingPE?.raw,1)} | F/DD: ${fmtN(ks.priceToBook?.raw,1)} | EPS: ${fmtN(ks.trailingEps?.raw,2)}
-Brüt Marj: ${fmtP(fd.grossMargins?.raw)} | İşletme Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}
-Gelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)} | FCF: ${fmtN(fd.freeCashflow?.raw)}
+Şirket: ${pr.longName||t} | Fiyat: ${s}${fmtPr(live.meta.regularMarketPrice)}
+Piyasa Değeri: ${fmtN(pr.marketCap?.raw)} | F/K: ${fmtN(sd.trailingPE?.raw,1)} | F/DD: ${fmtN(ks.priceToBook?.raw,1)} | FD/FAVÖK: ${fmtN(ks.enterpriseToEbitda?.raw,1)}
+ROE: ${fmtP(fd.returnOnEquity?.raw)} | ROA: ${fmtP(fd.returnOnAssets?.raw)}
+Brüt Marj: ${fmtP(fd.grossMargins?.raw)} | Faaliyet Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}
+Borç/Özsermaye: ${fmtN(ks.debtToEquity?.raw,2)} | Likit Oran: ${fmtN(fd.quickRatio?.raw,2)}
+EPS: ${fmtN(ks.trailingEps?.raw,2)} | Gelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)} | FCF: ${fmtN(fd.freeCashflow?.raw)}
 52H Yük/Düş: ${s}${fmtPr(sd.fiftyTwoWeekHigh?.raw)} / ${s}${fmtPr(sd.fiftyTwoWeekLow?.raw)}
 Analist Hedef: ${s}${fmtN(fd.targetMeanPrice?.raw,2)} | Temettü: ${fmtP(sd.dividendYield?.raw)}`:'Gerçek veri yok.';
     const j=await callClaude(`Hisse senedi analisti olarak "${t}" hissesini analiz et.\n${ctx}\nSADECE JSON:\n{"sirket_adi":"tam adı","is_modeli":"iş modeli ve gelir kaynakları, mevcut verilere atıf yap 3-4 cümle","rekabet_avantajlari":["a1","a2","a3","a4"],"riskler":[{"baslik":"R1","aciklama":"ac"},{"baslik":"R2","aciklama":"ac"},{"baslik":"R3","aciklama":"ac"},{"baslik":"R4","aciklama":"ac"}],"buyume_potansiyeli":"büyüme potansiyeli 3-4 cümle","bullish_senaryo":"yükseliş 3-4 cümle, hedef fiyat belirt","bearish_senaryo":"düşüş 3-4 cümle, risk belirt","analist":"analist konsensüsü 2 cümle","bulunamadi":false}\nTürkçe yaz.`);
@@ -475,7 +717,7 @@ async function m3(){
   try{live=await getAll(t);lok=true;fillHeader('lh3',live.meta,live.summary);}catch(e){console.warn(e);}
   try{
     const fd=live?.summary?.financialData||{},ks=live?.summary?.defaultKeyStatistics||{},s=sym(live?.meta?.currency);
-    const ctx=lok?`GERÇEK FİNANSAL VERİLER:\nGelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)}\nBrüt Marj: ${fmtP(fd.grossMargins?.raw)} | İşletme Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}\nEPS: ${s}${fmtN(ks.trailingEps?.raw,2)} | Kazanç Büyümesi: ${fmtP(fd.earningsGrowth?.raw)}\nSerbest Nakit Akışı: ${fmtN(fd.freeCashflow?.raw)} | ROE: ${fmtP(fd.returnOnEquity?.raw)}`:'Gerçek veri yok.';
+    const ctx=lok?`GERÇEK FİNANSAL VERİLER:\nGelir: ${fmtN(fd.totalRevenue?.raw)} | Gelir Büyümesi: ${fmtP(fd.revenueGrowth?.raw)}\nBrüt Marj: ${fmtP(fd.grossMargins?.raw)} | Faaliyet Marjı: ${fmtP(fd.operatingMargins?.raw)} | Net Marj: ${fmtP(fd.profitMargins?.raw)}\nROE: ${fmtP(fd.returnOnEquity?.raw)} | ROA: ${fmtP(fd.returnOnAssets?.raw)}\nBorç/Özsermaye: ${fmtN(ks.debtToEquity?.raw,2)} | Likit Oran: ${fmtN(fd.quickRatio?.raw,2)} | FD/FAVÖK: ${fmtN(ks.enterpriseToEbitda?.raw,1)}\nEPS: ${s}${fmtN(ks.trailingEps?.raw,2)} | Kazanç Büyümesi: ${fmtP(fd.earningsGrowth?.raw)}\nSerbest Nakit Akışı: ${fmtN(fd.freeCashflow?.raw)}`:'Gerçek veri yok.';
     const j=await callClaude(`Finansal analist olarak ${t} için son ${cnt} bilanço dönemi analizi yap.\n${ctx}\nSADECE JSON:\n{"genel":"mevcut verilerle 2-3 cümle genel değerlendirme","tepkiler":[{"donem":"Q4 2024","tepki":"pozitif","ac":"açıklama"},{"donem":"Q3 2024","tepki":"negatif","ac":"açıklama"},{"donem":"Q2 2024","tepki":"nötr","ac":"açıklama"},{"donem":"Q1 2024","tepki":"pozitif","ac":"açıklama"}],"guidance":"beklenti değişimleri 2-3 cümle","duyarlilik":"yatırımcı duyarlılığı 2-3 cümle","sinyaller":["s1","s2","s3","s4"],"sonraki":"bir sonraki bilanço öncesi 2-3 kritik nokta"}\nTürkçe yaz.`);
     stopSpin(3);$('rl3').textContent=t+' — Bilanço Analizi (Son '+cnt+' Dönem)';
     let h=badge(lok);h+=card('Finansal Performans',j.genel);
@@ -500,11 +742,11 @@ async function m4(){
     try{
       const d=await getAll(t);
       const pr=d.summary?.price||{},fd=d.summary?.financialData||{},sd=d.summary?.summaryDetail||{},ks=d.summary?.defaultKeyStatistics||{};
-      rows.push({t,name:pr.longName||t,sector:pr.sector||'Bilinmiyor',price:d.meta.regularMarketPrice,mcap:pr.marketCap?.raw,pe:sd.trailingPE?.raw,beta:sd.beta?.raw||ks.beta?.raw,gm:fd.grossMargins?.raw,rg:fd.revenueGrowth?.raw,ok:true});
+      rows.push({t,name:pr.longName||t,sector:pr.sector||'Bilinmiyor',price:d.meta.regularMarketPrice,mcap:pr.marketCap?.raw,pe:sd.trailingPE?.raw,beta:sd.beta?.raw||ks.beta?.raw,gm:fd.grossMargins?.raw,rg:fd.revenueGrowth?.raw,roe:fd.returnOnEquity?.raw,roa:fd.returnOnAssets?.raw,de:ks.debtToEquity?.raw,qr:fd.quickRatio?.raw,ev:ks.enterpriseToEbitda?.raw,ok:true});
     }catch(e){rows.push({t,name:t,sector:'?',price:null,ok:false});}
   }
   try{
-    const ctx=rows.map(r=>`${r.t}: ${r.name}, Sektör:${r.sector}, Fiyat:${r.price?r.price.toFixed(2):'?'}, Beta:${r.beta?r.beta.toFixed(2):'?'}, F/K:${r.pe?r.pe.toFixed(1):'?'}, GelirBüy:${r.rg?fmtP(r.rg):'?'}`).join('\n');
+    const ctx=rows.map(r=>`${r.t}: ${r.name}, Sektör:${r.sector}, Fiyat:${r.price?r.price.toFixed(2):'?'}, Beta:${r.beta?r.beta.toFixed(2):'?'}, F/K:${r.pe?r.pe.toFixed(1):'?'}, ROE:${r.roe!=null?fmtP(r.roe):'?'}, ROA:${r.roa!=null?fmtP(r.roa):'?'}, B/Ö:${r.de!=null?r.de.toFixed(1):'?'}, Likit:${r.qr!=null?r.qr.toFixed(2):'?'}, GelirBüy:${r.rg?fmtP(r.rg):'?'}`).join('\n');
     const j=await callClaude(`Portföy risk analisti olarak şu portföyü analiz et:\n${ctx}\nBüyüklük: ${size||'belirtilmedi'} | Hedef: ${goal}\nSADECE JSON:\n{"skor":"1-10","yorum":"2-3 cümle","sektorler":[{"ad":"sektör","yuzde":40,"yorum":"kısa"}],"korelasyon":"2-3 cümle","zayifliklar":["z1","z2","z3"],"oneriler":["o1","o2","o3"],"div_skor":"1-10"}\nTürkçe yaz.`);
     stopSpin(4);$('rl4').textContent='Portföy Risk Raporu ('+tickers.length+' hisse)';
     const sc=Number(j.skor)||5,sc_c=sc>7?'var(--red)':sc>4?'var(--gold2)':'var(--green)';
@@ -512,9 +754,21 @@ async function m4(){
     h+=`<div class="g3"><div class="mc"><div class="mc-l">Risk Skoru</div><div class="mc-v" style="color:${sc_c}">${j.skor}/10</div></div><div class="mc"><div class="mc-l">Diversifikasyon</div><div class="mc-v gold">${j.div_skor}/10</div></div><div class="mc"><div class="mc-l">Hisse Sayısı</div><div class="mc-v">${tickers.length}</div></div></div>`;
     h+=card('Genel Değerlendirme',j.yorum);
     h+=`<div class="card"><div class="card-t">Sektör Dağılımı</div><div class="port-bars">`;(j.sektorler||[]).forEach(s=>{h+=`<div class="pbar"><div class="pb-row"><span>${s.ad}</span><span style="font-family:'DM Mono',monospace">%${s.yuzde}</span></div><div class="pb-track"><div class="pb-fill" style="width:${Math.min(s.yuzde,100)}%"></div></div><div style="font-size:11px;color:var(--muted);margin-top:3px">${s.yorum}</div></div>`;});h+=`</div></div>`;
-    h+=`<div class="card"><div class="card-t">Hisse Detayları (Canlı Veri)</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${['Hisse','Şirket','Sektör','Fiyat','Beta','F/K'].map(c=>`<th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:400">${c}</th>`).join('')}</tr></thead><tbody>`;
-    rows.forEach(r=>{h+=`<tr><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--gold2)">${r.t}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-size:12px;color:var(--text)">${r.name}</td><td style="padding:8px;border-bottom:1px solid var(--border);color:var(--muted2)">${r.sector}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.price?r.price.toFixed(2):'—'}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.beta?r.beta.toFixed(2):'—'}</td><td style="padding:8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${r.pe?r.pe.toFixed(1):'—'}</td></tr>`;});
-    h+=`</tbody></table></div></div>`;
+    h+=`<div class="card"><div class="card-t">Hisse Detayları (Canlı Veri)</div><div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px"><thead><tr>${['Hisse','Şirket','Sektör','Fiyat','Beta','F/K','ROE','ROA','B/Ö','Likit','FD/FK'].map(c=>`<th style="text-align:left;padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:400;white-space:nowrap">${c}</th>`).join('')}</tr></thead><tbody>`;
+    rows.forEach(r=>{
+  const roe=r.roe!=null?fmtP(r.roe):'—';
+  const roa=r.roa!=null?fmtP(r.roa):'—';
+  const de=r.de!=null?r.de.toFixed(1):'—';
+  const qr=r.qr!=null?r.qr.toFixed(2):'—';
+  const ev=r.ev!=null?r.ev.toFixed(1)+'x':'—';
+  const roeC=r.roe>0.15?'var(--green)':r.roe<0?'var(--red)':'var(--text)';
+  const roaC=r.roa>0.1?'var(--green)':r.roa<0?'var(--red)':'var(--text)';
+  const deC=r.de>2?'var(--red)':r.de>1?'var(--gold2)':'var(--green)';
+  const qrC=r.qr<1?'var(--red)':r.qr>1.5?'var(--green)':'var(--gold2)';
+  const td=(v,col,mono)=>`<td style="padding:6px 8px;border-bottom:1px solid var(--border);color:${col||'var(--text)'};font-family:${mono?'DM Mono,monospace':'inherit'};font-size:12px;white-space:nowrap">${v}</td>`;
+  h+=`<tr>${td(r.t,'var(--gold2)',true)}${td(r.name,'var(--muted2)')}${td(r.sector,'var(--muted2)')}${td(r.price?r.price.toFixed(2):'—','var(--text)',true)}${td(r.beta?r.beta.toFixed(2):'—','var(--text)',true)}${td(r.pe?r.pe.toFixed(1):'—','var(--text)',true)}${td(roe,roeC,true)}${td(roa,roaC,true)}${td(de,deC,true)}${td(qr,qrC,true)}${td(ev,'var(--text)',true)}</tr>`;
+});
+h+=`</tbody></table></div></div>`;
     h+=card('Korelasyon & Sistematik Risk',j.korelasyon);
     h+=`<div class="g2"><div class="card"><div class="card-t">Portföy Zayıflıkları</div><ul class="adv-list">`;(j.zayifliklar||[]).forEach(z=>{h+=`<li><span class="adot" style="background:var(--red)"></span><span>${z}</span></li>`;});h+=`</ul></div><div class="card"><div class="card-t">Öneriler</div><ul class="adv-list">`;(j.oneriler||[]).forEach(o=>{h+=`<li><span class="adot"></span><span>${o}</span></li>`;});h+=`</ul></div></div>`;
     $('rc4').innerHTML=h;$('res4').style.display='block';
@@ -577,8 +831,881 @@ async function m7(){
   }catch(e){stopSpin(7);showErr(7,'Hata: '+e.message);}
 }
 
-const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7};
+const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7,8:m8,9:m9,10:m10,11:m11,12:m12};
 function run(n){runners[n]();}
+
+// ─── MOD 12 ───
+async function m12(){
+  const t=($('m12t').value||'').trim();
+  const prof=$('m12prof').value;
+  const ctx=$('m12ctx').value.trim();
+  if(!t)return alert('Piyasa veya varlık giriniz.');
+  startSpin(12);
+
+  // Try to get live price first
+  let liveCtx='';
+  try{
+    const ticker=t.toUpperCase().replace('BIST30','XU030.IS').replace('S&P500','^GSPC').replace('ALTIN','GC=F');
+    const d=await getAll(ticker);
+    const m=d.meta,s=sym(m.currency);
+    const pr=m.regularMarketPrice,prev=m.chartPreviousClose;
+    const chg=((pr-prev)/prev*100).toFixed(2);
+    liveCtx=`GERÇEK ZAMANLI VERİ: Fiyat ${s}${fmtPr(pr)} (${chg>0?'+':''}${chg}%), Günlük yüksek/düşük: ${s}${fmtPr(m.regularMarketDayHigh)}/${s}${fmtPr(m.regularMarketDayLow)}, 52H yüksek/düşük: ${s}${fmtPr(m.fiftyTwoWeekHigh)}/${s}${fmtPr(m.fiftyTwoWeekLow)}`;
+  }catch(e){console.warn('Live data unavailable');}
+
+  try{
+    const bugun=new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long',year:'numeric'});
+    const j=await callClaude(`Deneyimli trading koçu olarak ${t} için bugün (${bugun}) kapsamlı günlük trading planı oluştur.
+Trader profili: ${prof}
+${liveCtx?liveCtx:''}
+${ctx?'Ek bağlam: '+ctx:''}
+
+SADECE JSON:
+{
+  "ozet": "2-3 cümle bugünkü piyasa özeti ve genel yaklaşım",
+  "piyasa_durumu": "yükselen/düşen/yatay/kararsız",
+  "risk_seviyesi": "düşük/orta/yüksek",
+  "pre_market": {
+    "saat": "08:00 – 09:30",
+    "baslik": "Pre-Market Tarama",
+    "gorevler": [
+      {"saat":"08:00","gorev":"görev açıklaması","detay":"neden ve nasıl yapılır"},
+      {"saat":"08:15","gorev":"görev","detay":"detay"},
+      {"saat":"08:30","gorev":"görev","detay":"detay"},
+      {"saat":"08:45","gorev":"görev","detay":"detay"},
+      {"saat":"09:00","gorev":"görev","detay":"detay"},
+      {"saat":"09:15","gorev":"görev","detay":"detay"}
+    ]
+  },
+  "acilis": {
+    "saat": "09:30 – 11:00",
+    "baslik": "Açılış Stratejisi",
+    "gorevler": [
+      {"saat":"09:30","gorev":"görev","detay":"detay"},
+      {"saat":"09:35","gorev":"görev","detay":"detay"},
+      {"saat":"09:45","gorev":"görev","detay":"detay"},
+      {"saat":"10:00","gorev":"görev","detay":"detay"},
+      {"saat":"10:30","gorev":"görev","detay":"detay"}
+    ],
+    "giris_kosullari": ["giriş koşulu 1","giriş koşulu 2","giriş koşulu 3"],
+    "kacin_kosullari": ["kaçınılacak durum 1","kaçınılacak durum 2"]
+  },
+  "gun_ortasi": {
+    "saat": "11:00 – 14:30",
+    "baslik": "Gün Ortası Pozisyon Güncellemeleri",
+    "gorevler": [
+      {"saat":"11:00","gorev":"görev","detay":"detay"},
+      {"saat":"12:00","gorev":"görev","detay":"detay"},
+      {"saat":"13:00","gorev":"görev","detay":"detay"},
+      {"saat":"14:00","gorev":"görev","detay":"detay"}
+    ],
+    "pozisyon_kurallari": ["kural 1","kural 2","kural 3"]
+  },
+  "kapanis": {
+    "saat": "14:30 – 18:00",
+    "baslik": "Kapanış Yaklaşımı",
+    "gorevler": [
+      {"saat":"14:30","gorev":"görev","detay":"detay"},
+      {"saat":"15:30","gorev":"görev","detay":"detay"},
+      {"saat":"16:30","gorev":"görev","detay":"detay"},
+      {"saat":"17:00","gorev":"görev","detay":"detay"},
+      {"saat":"17:30","gorev":"görev","detay":"detay"}
+    ]
+  },
+  "gunden_sonra": {
+    "baslik": "Gün Sonu Değerlendirme",
+    "gorevler": ["görev 1","görev 2","görev 3"]
+  },
+  "kritik_seviyeler": {
+    "destek": ["seviye 1","seviye 2"],
+    "direnc": ["seviye 1","seviye 2"],
+    "pivot": "pivot seviyesi"
+  },
+  "gun_kurallari": ["altın kural 1","altın kural 2","altın kural 3","altın kural 4"],
+  "max_islem": "bugün maksimum kaç işlem yapılmalı",
+  "risk_limiti": "günlük maksimum kayıp limiti önerisi"
+}
+Türkçe yaz. Saatler ${t.includes('.IS')||t.includes('BIST')?'Türkiye (GMT+3) saatiyle':'yerel saatle'} olsun.`);
+
+    stopSpin(12);
+    const tarih=new Date().toLocaleDateString('tr-TR',{weekday:'long',day:'numeric',month:'long'});
+    $('rl12').textContent=t.toUpperCase()+' — Günlük Trading Planı · '+tarih;
+
+    const durumColor=d=>d==='yükselen'?'var(--green)':d==='düşen'?'var(--red)':'var(--gold2)';
+    const riskColor=r=>r==='yüksek'?'var(--red)':r==='orta'?'var(--gold2)':'var(--green)';
+    let checkIdx=0;
+
+    function buildSection(sec, color, icon){
+      if(!sec)return '';
+      let h=`<div class="card" style="border-color:${color}20;margin-bottom:1rem">`;
+      h+=`<div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+        <span style="font-size:18px">${icon}</span>
+        <div>
+          <div style="font-size:14px;font-weight:500;color:var(--text)">${sec.baslik||''}</div>
+          <div style="font-size:11px;color:var(--muted);font-family:'DM Mono',monospace">${sec.saat||''}</div>
+        </div>
+      </div>`;
+      (sec.gorevler||[]).forEach(g=>{
+        const id='chk'+checkIdx++;
+        const saat=g.saat||'';
+        const gorev=g.gorev||g||'';
+        const detay=g.detay||'';
+        h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')" style="margin-bottom:5px;border-left:2px solid ${color}30">
+          <div class="cb" id="cb_${id}"></div>
+          <div style="flex:1">
+            <div style="display:flex;align-items:center;gap:8px">
+              ${saat?`<span style="font-family:'DM Mono',monospace;font-size:10px;color:${color};min-width:40px">${saat}</span>`:''}
+              <span style="font-size:13px;font-weight:500;color:var(--text)">${gorev}</span>
+            </div>
+            ${detay?`<div style="font-size:12px;color:var(--muted);margin-top:3px;padding-left:${saat?'48px':'0'}">${detay}</div>`:''}
+          </div>
+        </div>`;
+      });
+      if(sec.giris_kosullari?.length){
+        h+=`<div style="margin-top:10px;padding-top:10px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Giriş Koşulları</div>`;
+        sec.giris_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--green)">✓</span>${k}</div>`;});
+        h+=`</div>`;
+      }
+      if(sec.kacin_kosullari?.length){
+        h+=`<div style="margin-top:8px">
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Kaçınılacak Durumlar</div>`;
+        sec.kacin_kosullari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--red)">✗</span>${k}</div>`;});
+        h+=`</div>`;
+      }
+      if(sec.pozisyon_kurallari?.length){
+        h+=`<div style="margin-top:8px;padding-top:8px;border-top:1px solid var(--border)">
+          <div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Pozisyon Kuralları</div>`;
+        sec.pozisyon_kurallari.forEach(k=>{h+=`<div style="font-size:12px;color:var(--muted2);padding:3px 0;display:flex;gap:8px"><span style="color:var(--gold)">◆</span>${k}</div>`;});
+        h+=`</div>`;
+      }
+      h+=`</div>`;
+      return h;
+    }
+
+    let h='';
+    // TOP SUMMARY BAR
+    h+=`<div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:10px;margin-bottom:1.5rem">
+      <div class="mc" style="grid-column:span 2"><div class="mc-l">Bugünkü Özet</div><div style="font-size:13px;color:var(--text);line-height:1.6;margin-top:4px">${j.ozet}</div></div>
+      <div class="mc"><div class="mc-l">Piyasa Durumu</div><div class="mc-v" style="color:${durumColor(j.piyasa_durumu)};font-size:14px;text-transform:capitalize">${j.piyasa_durumu||'—'}</div></div>
+      <div class="mc"><div class="mc-l">Risk Seviyesi</div><div class="mc-v" style="color:${riskColor(j.risk_seviyesi)};font-size:14px;text-transform:capitalize">${j.risk_seviyesi||'—'}</div></div>
+    </div>`;
+
+    // KRİTİK SEVİYELER
+    const kl=j.kritik_seviyeler||{};
+    h+=`<div class="card" style="margin-bottom:1rem">
+      <div class="card-t">Kritik Fiyat Seviyeleri</div>
+      <div style="display:flex;gap:1.5rem;flex-wrap:wrap">
+        <div>
+          <div style="font-size:10px;color:var(--green);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Destekler</div>
+          <div style="display:flex;gap:6px">${(kl.destek||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:6px;color:var(--green)">${d}</span>`).join('')}</div>
+        </div>
+        <div>
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Dirençler</div>
+          <div style="display:flex;gap:6px">${(kl.direnc||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:6px;color:var(--red)">${d}</span>`).join('')}</div>
+        </div>
+        ${kl.pivot?`<div><div style="font-size:10px;color:var(--gold);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Pivot</div><span style="font-family:'DM Mono',monospace;font-size:13px;padding:4px 10px;background:var(--gold3);border:1px solid rgba(201,168,76,.2);border-radius:6px;color:var(--gold2)">${kl.pivot}</span></div>`:''}
+        <div style="margin-left:auto;text-align:right">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Maks. İşlem</div>
+          <div style="font-family:'DM Mono',monospace;font-size:18px;color:var(--gold2)">${j.max_islem||'—'}</div>
+        </div>
+        <div style="text-align:right">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Risk Limiti</div>
+          <div style="font-size:13px;color:var(--red)">${j.risk_limiti||'—'}</div>
+        </div>
+      </div>
+    </div>`;
+
+    // 4 CHECKLIST SECTIONS
+    h+=buildSection(j.pre_market,  '#4a9eff', '🔍');
+    h+=buildSection(j.acilis,      '#3fb87f', '🚀');
+    h+=buildSection(j.gun_ortasi,  '#c9a84c', '⚖️');
+    h+=buildSection(j.kapanis,     '#e05555', '🎯');
+
+    // GÜN SONU
+    if(j.gunden_sonra?.gorevler?.length){
+      h+=`<div class="card" style="margin-bottom:1rem">
+        <div style="font-size:14px;font-weight:500;color:var(--text);margin-bottom:12px">📋 ${j.gunden_sonra.baslik||'Gün Sonu Değerlendirme'}</div>`;
+      j.gunden_sonra.gorevler.forEach(g=>{
+        const id='chk'+checkIdx++;
+        h+=`<div class="cl-item" id="${id}" onclick="toggleCl('${id}')" style="margin-bottom:5px">
+          <div class="cb" id="cb_${id}"></div>
+          <span style="font-size:13px;color:var(--text)">${g}</span>
+        </div>`;
+      });
+      h+=`</div>`;
+    }
+
+    // ALTIN KURALLAR
+    h+=`<div class="card" style="border-color:rgba(201,168,76,.25)">
+      <div class="card-t" style="color:var(--gold)">Altın Kurallar</div>`;
+    (j.gun_kurallari||[]).forEach((k,i)=>{
+      h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:8px 0;border-bottom:1px solid var(--border)">
+        <span style="font-family:'DM Mono',monospace;font-size:11px;color:var(--gold);min-width:24px;padding-top:1px">${String(i+1).padStart(2,'0')}</span>
+        <span style="font-size:13px;color:var(--text);line-height:1.5">${k}</span>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    // PROGRESS COUNTER
+    h+=`<div style="margin-top:1.5rem;padding:1rem;background:var(--bg2);border:1px solid var(--border);border-radius:10px;display:flex;align-items:center;justify-content:space-between">
+      <div style="font-size:13px;color:var(--muted2)">Checklist İlerlemesi</div>
+      <div id="progressBar" style="font-family:'DM Mono',monospace;font-size:14px;color:var(--gold2)">0 / 0 tamamlandı</div>
+    </div>`;
+
+    $('rc12').innerHTML=h;
+    $('res12').style.display='block';
+
+    // Update progress on each click
+    const total=document.querySelectorAll('#rc12 .cl-item').length;
+    document.getElementById('progressBar').textContent=`0 / ${total} tamamlandı`;
+    document.querySelectorAll('#rc12 .cl-item').forEach(el=>{
+      el.addEventListener('click',()=>{
+        setTimeout(()=>{
+          const done=document.querySelectorAll('#rc12 .cb.chk').length;
+          const pct=Math.round(done/total*100);
+          document.getElementById('progressBar').textContent=`${done} / ${total} tamamlandı (${pct}%)`;
+          document.getElementById('progressBar').style.color=pct===100?'var(--green)':'var(--gold2)';
+        },50);
+      });
+    });
+
+  }catch(e){stopSpin(12);showErr(12,'Hata: '+e.message);}
+}
+
+// ─── MOD 11 params UI ───
+const STRATEGY_PARAMS = {
+  sma_cross:        [{id:'fast',label:'Hızlı SMA',default:20},{id:'slow',label:'Yavaş SMA',default:50}],
+  ema_cross:        [{id:'fast',label:'Hızlı EMA',default:12},{id:'slow',label:'Yavaş EMA',default:26}],
+  rsi_ob_os:        [{id:'rsi_period',label:'RSI Periyodu',default:14},{id:'overbought',label:'Aşırı Alım',default:70},{id:'oversold',label:'Aşırı Satım',default:30}],
+  macd_cross:       [{id:'fast',label:'Hızlı EMA',default:12},{id:'slow',label:'Yavaş EMA',default:26},{id:'signal',label:'Sinyal',default:9}],
+  bollinger_bounce: [{id:'bb_period',label:'BB Periyodu',default:20},{id:'bb_std',label:'Std Sapma',default:2}],
+  rsi_divergence:   [{id:'rsi_period',label:'RSI Periyodu',default:14},{id:'lookback',label:'Lookback',default:5}],
+};
+
+function updateParams(){
+  const strat = $('m11strat').value;
+  const fields = STRATEGY_PARAMS[strat] || [];
+  $('paramFields').innerHTML = fields.map(f =>
+    `<div class="fg"><label class="fl">${f.label}</label><input class="fi mono" id="p_${f.id}" value="${f.default}" style="text-align:center"></div>`
+  ).join('');
+}
+document.addEventListener('DOMContentLoaded', updateParams);
+setTimeout(updateParams, 100);
+
+// ─── MOD 11 ───
+async function m11(){
+  const t=($('m11t').value||'').trim().toUpperCase();
+  const strat=$('m11strat').value;
+  const per=$('m11per').value;
+  if(!t)return alert('Hisse kodu giriniz.');
+
+  // collect params
+  const fields = STRATEGY_PARAMS[strat]||[];
+  const params={};
+  fields.forEach(f=>{
+    const el=$('p_'+f.id);
+    if(el) params[f.id]=parseFloat(el.value)||f.default;
+  });
+
+  startSpin(11);
+  try{
+    // 1) Run backtest on server (real data)
+    const url=`/api/backtest?ticker=${encodeURIComponent(t)}&strategy=${strat}&period=${per}&params=${encodeURIComponent(JSON.stringify(params))}`;
+    const r=await fetch(url);
+    const bt=await r.json();
+    if(bt.error)throw new Error(bt.error);
+
+    const m=bt.metrics;
+    const meta=bt.meta||{};
+
+    // 2) AI optimization suggestions
+    const stratNames={sma_cross:'SMA Kesişimi',ema_cross:'EMA Kesişimi',rsi_ob_os:'RSI Aşırı Alım/Satım',macd_cross:'MACD Sinyal Kesişimi',bollinger_bounce:'Bollinger Band Geri Dönüşü',rsi_divergence:'RSI Uyumsuzluğu'};
+
+    const j=await callClaude(`Kantitatif analist olarak ${t} hissesinde ${stratNames[strat]||strat} stratejisinin backtest sonuçlarını değerlendir.
+
+GERÇEK BACKTEST SONUÇLARI (Yahoo Finance - ${per}):
+- Toplam Trade: ${m.total_trades}
+- Kazanma Oranı: %${m.win_rate}
+- Profit Factor: ${m.profit_factor}
+- Max Drawdown: %${m.max_drawdown}
+- Toplam Getiri: %${m.total_return}
+- Buy & Hold Getiri: %${m.bah_return}
+- Ortalama Kazanan: %${m.avg_win}
+- Ortalama Kaybeden: %${m.avg_loss}
+- En İyi Trade: %${m.best_trade}
+- En Kötü Trade: %${m.worst_trade}
+- Ort. Trade Süresi: ${m.avg_bars} bar
+Mevcut parametreler: ${JSON.stringify(params)}
+
+SADECE JSON:
+{
+  "genel_degerlendirme": "2-3 cümle strateji performans değerlendirmesi",
+  "guclu_yonler": ["güçlü yön 1","güçlü yön 2"],
+  "zayif_yonler": ["zayıf yön 1","zayıf yön 2"],
+  "optimizasyon": [
+    {"baslik":"öneri başlığı","aciklama":"detay 2 cümle","beklenen_etki":"beklenen iyileşme"},
+    {"baslik":"öneri 2","aciklama":"detay","beklenen_etki":"etki"},
+    {"baslik":"öneri 3","aciklama":"detay","beklenen_etki":"etki"}
+  ],
+  "filtre_onerileri": ["filtre 1 örn: hacim filtresi","filtre 2","filtre 3"],
+  "risk_yonetimi": "pozisyon büyüklüğü ve risk yönetimi önerisi 2-3 cümle",
+  "piyasa_kosullari": "bu stratejinin hangi piyasa koşullarında iyi/kötü çalıştığı 2-3 cümle",
+  "sonuc": "AL/KULLANMA/GELIŞTIR"
+}
+Türkçe yaz.`);
+
+    stopSpin(11);
+    $('rl11').textContent=t+' — '+( stratNames[strat]||strat)+' Backtest ('+per+')';
+
+    const retColor=v=>v>=0?'var(--green)':'var(--red)';
+    const pfColor=v=>v>=1.5?'var(--green)':v>=1?'var(--gold2)':'var(--red)';
+    const wrColor=v=>v>=55?'var(--green)':v>=45?'var(--gold2)':'var(--red)';
+    const ddColor=v=>v<=10?'var(--green)':v<=20?'var(--gold2)':'var(--red)';
+    const sonucColor=s=>s==='AL'?'var(--green)':s==='KULLANMA'?'var(--red)':'var(--gold2)';
+
+    let h=`<div class="dbadge"><span class="dot"></span>Gerçek Tarihsel Veri — Yahoo Finance (${meta.bars_total||'?'} günlük bar)</div>`;
+
+    // KPI GRID
+    h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem">
+      <div class="mc"><div class="mc-l">Kazanma Oranı</div><div class="mc-v" style="color:${wrColor(m.win_rate)}">%${m.win_rate}</div></div>
+      <div class="mc"><div class="mc-l">Profit Factor</div><div class="mc-v" style="color:${pfColor(m.profit_factor)}">${m.profit_factor}</div></div>
+      <div class="mc"><div class="mc-l">Max Drawdown</div><div class="mc-v" style="color:${ddColor(m.max_drawdown)}">%${m.max_drawdown}</div></div>
+      <div class="mc"><div class="mc-l">Toplam Getiri</div><div class="mc-v" style="color:${retColor(m.total_return)}">${m.total_return>0?'+':''}%${m.total_return}</div></div>
+    </div>`;
+
+    // SECONDARY METRICS
+    h+=`<div style="display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-bottom:1rem">
+      <div class="mc"><div class="mc-l">Toplam Trade</div><div class="mc-v">${m.total_trades}</div></div>
+      <div class="mc"><div class="mc-l">Buy & Hold</div><div class="mc-v" style="color:${retColor(m.bah_return)}">${m.bah_return>0?'+':''}%${m.bah_return}</div></div>
+      <div class="mc"><div class="mc-l">Ort. Kazanan</div><div class="mc-v g">+%${m.avg_win}</div></div>
+      <div class="mc"><div class="mc-l">Ort. Kaybeden</div><div class="mc-v r">%${m.avg_loss}</div></div>
+    </div>`;
+
+    // EQUITY CURVE (simple ASCII sparkline)
+    if(bt.equity && bt.equity.length > 1){
+      const eq=bt.equity;
+      const eqMin=Math.min(...eq), eqMax=Math.max(...eq);
+      const H=60, W=Math.min(eq.length,50);
+      const pts=eq.slice(-W).map((v,i)=>{
+        const x=i/(W-1)*580+10;
+        const y=H-((v-eqMin)/(eqMax-eqMin||1))*(H-10)+5;
+        return `${x.toFixed(1)},${y.toFixed(1)}`;
+      }).join(' ');
+      const lastColor=eq[eq.length-1]>=1?'#3fb87f':'#e05555';
+      h+=`<div class="card" style="margin-bottom:1rem"><div class="card-t">Equity Eğrisi</div>
+        <svg viewBox="0 0 600 80" style="width:100%;height:80px">
+          <polyline points="${pts}" fill="none" stroke="${lastColor}" stroke-width="2" stroke-linejoin="round"/>
+          <line x1="10" y1="5" x2="10" y2="${H+5}" stroke="rgba(255,255,255,.1)" stroke-width="0.5"/>
+          <line x1="10" y1="${H+5}" x2="590" y2="${H+5}" stroke="rgba(255,255,255,.1)" stroke-width="0.5"/>
+          <text x="12" y="14" fill="rgba(255,255,255,.3)" font-size="9">${eqMax.toFixed(2)}x</text>
+          <text x="12" y="${H+4}" fill="rgba(255,255,255,.3)" font-size="9">${eqMin.toFixed(2)}x</text>
+        </svg>
+      </div>`;
+    }
+
+    // SON TRADES TABLOSU
+    if(bt.trades && bt.trades.length){
+      h+=`<div class="card" style="margin-bottom:1rem"><div class="card-t">Son Tradeler</div>
+        <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:12px">
+        <thead><tr>${['Giriş','Çıkış','P&L','Süre (bar)'].map(c=>`<th style="text-align:left;padding:5px 8px;border-bottom:1px solid var(--border);color:var(--muted);font-weight:400">${c}</th>`).join('')}</tr></thead>
+        <tbody>`;
+      bt.trades.slice().reverse().forEach(t=>{
+        const c=t.pnl>=0?'var(--green)':'var(--red)';
+        h+=`<tr>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${t.entry}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace">${t.exit}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:${c}">${t.pnl>=0?'+':''}%${t.pnl}</td>
+          <td style="padding:6px 8px;border-bottom:1px solid var(--border);color:var(--muted2)">${t.bars}</td>
+        </tr>`;
+      });
+      h+=`</tbody></table></div></div>`;
+    }
+
+    // AI DEĞERLENDİRME
+    h+=card('AI Değerlendirmesi',j.genel_degerlendirme);
+    h+=`<div class="g2">
+      <div class="card"><div class="card-t">Güçlü Yönler</div><ul class="adv-list">`;
+    (j.guclu_yonler||[]).forEach(g=>{h+=`<li><span class="adot"></span><span>${g}</span></li>`;});
+    h+=`</ul></div><div class="card"><div class="card-t">Zayıf Yönler</div><ul class="adv-list">`;
+    (j.zayif_yonler||[]).forEach(z=>{h+=`<li><span class="adot" style="background:var(--red)"></span><span>${z}</span></li>`;});
+    h+=`</ul></div></div>`;
+
+    // OPTİMİZASYON ÖNERİLERİ
+    h+=`<div class="card"><div class="card-t">Optimizasyon Önerileri</div>`;
+    (j.optimizasyon||[]).forEach((o,i)=>{
+      h+=`<div style="padding:10px 0;border-bottom:1px solid var(--border)">
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:4px">
+          <span style="font-family:'DM Mono',monospace;font-size:10px;color:var(--muted)">0${i+1}</span>
+          <span style="font-size:13px;font-weight:500;color:var(--text)">${o.baslik}</span>
+          <span style="font-size:11px;color:var(--green);margin-left:auto">${o.beklenen_etki}</span>
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.5">${o.aciklama}</div>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    h+=`<div class="g2">`;
+    h+=`<div class="card"><div class="card-t">Filtre Önerileri</div><ul class="adv-list">`;
+    (j.filtre_onerileri||[]).forEach(f=>{h+=`<li><span class="adot" style="background:var(--gold)"></span><span>${f}</span></li>`;});
+    h+=`</ul></div>`;
+    h+=card('Risk Yönetimi',j.risk_yonetimi);
+    h+=`</div>`;
+    h+=card('Piyasa Koşulları',j.piyasa_kosullari);
+
+    // SONUÇ
+    const sc=j.sonuc||'GELIŞTIR';
+    h+=`<div class="card" style="text-align:center;padding:1.5rem;border-color:rgba(201,168,76,.2)">
+      <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1.5px;margin-bottom:8px">AI Karar</div>
+      <div style="font-size:36px;font-weight:600;color:${sonucColor(sc)};font-family:'Playfair Display',serif">${sc}</div>
+    </div>`;
+
+    $('rc11').innerHTML=h;
+    $('res11').style.display='block';
+  }catch(e){stopSpin(11);showErr(11,'Hata: '+e.message);}
+}
+
+// ─── MOD 10 ───
+async function m10(){
+  const t=($('m10t').value||'').trim();
+  if(!t)return alert('Şirket veya konu giriniz.');
+  startSpin(10);
+
+  // 1) Haberleri çek
+  let newsItems=[], newsOk=false;
+  try{
+    const r=await fetch(`/api/news?q=${encodeURIComponent(t)}`);
+    const d=await r.json();
+    newsItems=d.news||[];
+    newsOk=newsItems.length>0;
+  }catch(e){console.warn('Haber çekme hatası:',e);}
+
+  try{
+    const bugun=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+    const newsStr=newsOk
+      ? 'GÜNCEL HABERLER (Yahoo Finance):\n'+newsItems.slice(0,8).map((n,i)=>`${i+1}. [${n.source||'?'}] ${n.title}`).join('\n')
+      : 'Haber API\'den veri alınamadı. Bilgi kesim tarihinle genel değerlendirme yap.';
+
+    const j=await callClaude(`Finansal analist ve haber stratejisti olarak "${t}" için haber akışını analiz et.
+Tarih: ${bugun}
+
+${newsStr}
+
+Bu haberleri trade fırsatına dönüştür. SADECE JSON:
+{
+  "genel_sentiment": "çok olumlu/olumlu/nötr/olumsuz/çok olumsuz",
+  "sentiment_skoru": 7,
+  "ozet": "2-3 cümle haber akışının genel özeti",
+  "onemli_haberler": [
+    {"baslik": "haber başlığı", "etki": "olumlu/olumsuz/nötr", "aciklama": "bu haberin önemi 1-2 cümle"},
+    {"baslik": "haber 2", "etki": "olumlu", "aciklama": "açıklama"},
+    {"baslik": "haber 3", "etki": "olumsuz", "aciklama": "açıklama"}
+  ],
+  "kisa_vade": {
+    "sure": "1-5 gün",
+    "etki": "olumlu/olumsuz/nötr",
+    "fiyat_araligi": "beklenen fiyat hareketi örn -%3 / +%5",
+    "aciklama": "kısa vadeli etki 2-3 cümle"
+  },
+  "uzun_vade": {
+    "sure": "1-3 ay",
+    "etki": "olumlu/olumsuz/nötr",
+    "aciklama": "uzun vadeli etki 2-3 cümle"
+  },
+  "strateji": {
+    "pozisyon": "AL/TUT/SAT/BEKLE",
+    "aciklama": "önerilen pozisyonlanma stratejisi 2-3 cümle",
+    "giris_zamani": "ideal giriş zamanlaması",
+    "risk": "ana risk faktörü"
+  },
+  "piyasa_psikolojisi": "haber akışının yatırımcı psikolojisini nasıl etkileyeceği 3-4 cümle — korku/açgözlülük, FOMO, panik satış vb.",
+  "katalistler": ["beklenecek katalist 1", "beklenecek katalist 2", "beklenecek katalist 3"]
+}
+Türkçe yaz.`);
+
+    stopSpin(10);
+    $('rl10').textContent=t.toUpperCase()+' — Haber & Sentiment Analizi';
+
+    const sentColor=s=>{
+      if(s.includes('çok olumlu'))return'var(--green)';
+      if(s.includes('olumlu'))return'#7ecf9f';
+      if(s.includes('çok olumsuz'))return'var(--red)';
+      if(s.includes('olumsuz'))return'#e08080';
+      return'var(--muted2)';
+    };
+    const etkilColor=e=>e==='olumlu'?'var(--green)':e==='olumsuz'?'var(--red)':'var(--muted2)';
+    const etkilBg=e=>e==='olumlu'?'var(--green2)':e==='olumsuz'?'var(--red2)':'var(--bg3)';
+    const pozColor=p=>p==='AL'?'var(--green)':p==='SAT'?'var(--red)':p==='BEKLE'?'var(--gold2)':'var(--muted2)';
+
+    let h='';
+
+    // HABERLER LİSTESİ (gerçek)
+    if(newsOk){
+      h+=`<div class="dbadge"><span class="dot"></span>Güncel Haberler — Yahoo Finance</div>`;
+      h+=`<div class="card" style="margin-bottom:1rem"><div class="card-t">Ham Haber Akışı</div>`;
+      newsItems.slice(0,8).forEach(n=>{
+        const ts=n.time?new Date(n.time*1000).toLocaleDateString('tr-TR'):'';
+        h+=`<div style="padding:9px 0;border-bottom:1px solid var(--border);display:flex;gap:10px;align-items:flex-start">
+          <div style="flex:1">
+            <div style="font-size:13px;color:var(--text);line-height:1.5">${n.title}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">${n.source||''}${ts?' · '+ts:''}</div>
+          </div>
+          ${n.url?`<a href="${n.url}" target="_blank" style="font-size:11px;color:var(--blue);white-space:nowrap;text-decoration:none;flex-shrink:0">→ Oku</a>`:''}
+        </div>`;
+      });
+      h+=`</div>`;
+    } else {
+      h+=`<div class="aibadge">⚡ AI Analizi (haber verisi alınamadı)</div>`;
+    }
+
+    // SENTIMENT SKORU
+    const sk=Math.min(10,Math.max(1,j.sentiment_skoru||5));
+    const skColor=sk>=7?'var(--green)':sk>=4?'var(--gold2)':'var(--red)';
+    h+=`<div class="card" style="margin-bottom:1rem">
+      <div style="display:flex;align-items:center;gap:1.5rem;flex-wrap:wrap">
+        <div style="text-align:center;min-width:80px">
+          <div style="font-size:42px;font-family:'DM Mono',monospace;font-weight:500;color:${skColor}">${sk}</div>
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">/10 Sentiment</div>
+        </div>
+        <div style="flex:1">
+          <div style="font-size:14px;font-weight:500;color:${sentColor(j.genel_sentiment||'')};margin-bottom:6px;text-transform:capitalize">${j.genel_sentiment||'—'}</div>
+          <div style="font-size:13px;color:var(--muted2);line-height:1.65">${j.ozet}</div>
+        </div>
+      </div>
+    </div>`;
+
+    // ÖNEMLİ HABERLER ANALİZİ
+    h+=`<div class="card"><div class="card-t">Haber Analizi</div>`;
+    (j.onemli_haberler||[]).forEach(n=>{
+      h+=`<div style="display:flex;gap:12px;align-items:flex-start;padding:10px 0;border-bottom:1px solid var(--border)">
+        <span style="font-size:11px;font-weight:500;padding:3px 9px;border-radius:999px;background:${etkilBg(n.etki)};color:${etkilColor(n.etki)};white-space:nowrap;flex-shrink:0;margin-top:2px">${n.etki}</span>
+        <div>
+          <div style="font-size:13px;font-weight:500;color:var(--text);margin-bottom:3px">${n.baslik}</div>
+          <div style="font-size:12px;color:var(--muted2);line-height:1.5">${n.aciklama}</div>
+        </div>
+      </div>`;
+    });
+    h+=`</div>`;
+
+    // KISA & UZUN VADE YAN YANA
+    const kv=j.kisa_vade||{},uv=j.uzun_vade||{};
+    h+=`<div class="g2">
+      <div class="card" style="border-color:${etkilColor(kv.etki)==='var(--green)'?'rgba(63,184,127,.2)':kv.etki==='olumsuz'?'rgba(224,85,85,.2)':'var(--border)'}">
+        <div class="card-t">Kısa Vade (${kv.sure||'1-5 gün'})</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:8px">
+          <span style="font-size:12px;font-weight:500;color:${etkilColor(kv.etki)};text-transform:capitalize">${kv.etki||'—'}</span>
+          ${kv.fiyat_araligi?`<span style="font-family:'DM Mono',monospace;font-size:13px;color:var(--gold2);margin-left:auto">${kv.fiyat_araligi}</span>`:''}
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.6">${kv.aciklama||''}</div>
+      </div>
+      <div class="card">
+        <div class="card-t">Uzun Vade (${uv.sure||'1-3 ay'})</div>
+        <div style="margin-bottom:8px"><span style="font-size:12px;font-weight:500;color:${etkilColor(uv.etki)};text-transform:capitalize">${uv.etki||'—'}</span></div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.6">${uv.aciklama||''}</div>
+      </div>
+    </div>`;
+
+    // STRATEJİ
+    const str=j.strateji||{};
+    h+=`<div class="card" style="border-color:rgba(201,168,76,.2)">
+      <div style="display:flex;align-items:center;gap:12px;margin-bottom:12px">
+        <div class="card-t" style="margin:0">Önerilen Strateji</div>
+        <span style="font-family:'DM Mono',monospace;font-size:14px;font-weight:500;padding:4px 14px;border-radius:999px;background:var(--bg3);border:1px solid var(--border);color:${pozColor(str.pozisyon)}">${str.pozisyon||'—'}</span>
+      </div>
+      <div style="font-size:14px;color:var(--text);line-height:1.7;margin-bottom:10px">${str.aciklama||''}</div>
+      <div class="g2">
+        <div style="background:var(--bg3);border-radius:7px;padding:10px 12px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Giriş Zamanlaması</div>
+          <div style="font-size:13px;color:var(--text)">${str.giris_zamani||'—'}</div>
+        </div>
+        <div style="background:var(--red2);border-radius:7px;padding:10px 12px;border:1px solid rgba(224,85,85,.15)">
+          <div style="font-size:10px;color:var(--red);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">Ana Risk</div>
+          <div style="font-size:13px;color:var(--text)">${str.risk||'—'}</div>
+        </div>
+      </div>
+    </div>`;
+
+    // PİYASA PSİKOLOJİSİ
+    h+=card('Piyasa Psikolojisi',j.piyasa_psikolojisi);
+
+    // KATALİSTLER
+    h+=`<div class="card"><div class="card-t">Beklenecek Katalistler</div><ul class="adv-list">`;
+    (j.katalistler||[]).forEach(k=>{h+=`<li><span class="adot" style="background:var(--gold)"></span><span>${k}</span></li>`;});
+    h+=`</ul></div>`;
+
+    $('rc10').innerHTML=h;
+    $('res10').style.display='block';
+  }catch(e){stopSpin(10);showErr(10,'Hata: '+e.message);}
+}
+
+// ─── MOD 9 ───
+async function m9(){
+  const t=($('m9t').value||'').trim().toUpperCase();
+  if(!t)return alert('Hisse kodu giriniz.');
+  startSpin(9);
+  let live=null,lok=false;
+  try{
+    live=await getAll(t);lok=true;
+    fillHeader('lh9',live.meta,live.summary);
+    $('lh9').style.display='block';
+  }catch(e){console.warn(e);}
+
+  try{
+    const m=live?.meta||{},sd=live?.summary?.summaryDetail||{},s=sym(m.currency);
+    const pr=live?.meta?.regularMarketPrice;
+    const hi52=m.fiftyTwoWeekHigh||sd.fiftyTwoWeekHigh?.raw;
+    const lo52=m.fiftyTwoWeekLow||sd.fiftyTwoWeekLow?.raw;
+    const dhi=m.regularMarketDayHigh,dlo=m.regularMarketDayLow;
+    const vol=m.regularMarketVolume,avol=sd.averageVolume?.raw;
+
+    const ctx=lok?`GERÇEK ZAMANLI FİYAT VERİLERİ (Yahoo Finance):
+Güncel fiyat: ${s}${fmtPr(pr)}
+Günlük yüksek/düşük: ${s}${fmtPr(dhi)} / ${s}${fmtPr(dlo)}
+52H yüksek/düşük: ${s}${fmtPr(hi52)} / ${s}${fmtPr(lo52)}
+Hacim: ${fmtN(vol,0)} | Ort. Hacim: ${fmtN(avol,0)}
+Hacim ortalamanın ${vol&&avol?(vol/avol).toFixed(1):'?'}x'i`:'Gerçek veri yok, genel analiz yap.';
+
+    const j=await callClaude(`Profesyonel teknik analist olarak ${t} hissesini günlük (daily) ve haftalık (weekly) zaman dilimlerinde analiz et.
+${ctx}
+Bu verileri kullanarak SADECE JSON döndür:
+{
+  "gunluk": {
+    "trend": "yükselen/düşen/yatay",
+    "destekler": ["seviye1","seviye2","seviye3"],
+    "direncler": ["seviye1","seviye2","seviye3"],
+    "hareketli_ort": {"ma20":"seviye","ma50":"seviye","ma200":"seviye","yorum":"2 cümle HO yorumu"},
+    "momentum": {"rsi":"tahmini değer","macd":"pozitif/negatif/nötr","yorum":"2 cümle momentum yorumu"},
+    "trend_cizgisi": "trend çizgisi yorumu 2 cümle"
+  },
+  "haftalık": {
+    "trend": "yükselen/düşen/yatay",
+    "destekler": ["seviye1","seviye2"],
+    "direncler": ["seviye1","seviye2"],
+    "genel_yapi": "haftalık yapı yorumu 2-3 cümle"
+  },
+  "sinyal": "AL",
+  "sinyal_gucu": "güçlü/orta/zayıf",
+  "gerekce": ["gerekçe 1","gerekçe 2","gerekçe 3","gerekçe 4"],
+  "kilit_seviye": "en kritik fiyat seviyesi ve neden önemli",
+  "senaryo_pozitif": "AL senaryosu gerçekleşirse ne olur 2 cümle",
+  "senaryo_negatif": "SAT senaryosu gerçekleşirse ne olur 2 cümle",
+  "ozet": "2-3 cümle genel teknik özet"
+}
+sinyal alanı sadece AL, TUT veya SAT olabilir. Türkçe yaz.`);
+
+    stopSpin(9);
+    $('rl9').textContent=t+' — Teknik Analiz & Sinyal';
+
+    const sColor=j.sinyal==='AL'?'var(--green)':j.sinyal==='SAT'?'var(--red)':'var(--gold2)';
+    const sBg=j.sinyal==='AL'?'var(--green2)':j.sinyal==='SAT'?'var(--red2)':'var(--gold3)';
+    const sBorder=j.sinyal==='AL'?'rgba(63,184,127,.3)':j.sinyal==='SAT'?'rgba(224,85,85,.3)':'rgba(201,168,76,.3)';
+    const gStr=j.sinyal_gucu==='güçlü'?'▲▲▲':j.sinyal_gucu==='orta'?'▲▲':'▲';
+
+    let h=badge(lok);
+
+    // BIG SIGNAL CARD
+    h+=`<div class="card" style="background:${sBg};border-color:${sBorder};text-align:center;padding:2rem 1.5rem;margin-bottom:1rem">
+      <div style="font-size:12px;color:${sColor};text-transform:uppercase;letter-spacing:2px;margin-bottom:8px;font-family:'DM Mono',monospace">Sinyal</div>
+      <div style="font-size:52px;font-weight:600;color:${sColor};font-family:'Playfair Display',serif;line-height:1">${j.sinyal}</div>
+      <div style="font-size:13px;color:${sColor};margin-top:8px;opacity:.8">${gStr} ${j.sinyal_gucu} sinyal</div>
+      <div style="font-size:13px;color:var(--muted2);margin-top:12px;line-height:1.6">${j.ozet}</div>
+    </div>`;
+
+    // GEREKÇELER
+    h+=`<div class="card"><div class="card-t">Sinyal Gerekçeleri</div><ul class="adv-list">`;
+    (j.gerekce||[]).forEach((g,i)=>{
+      const dot=j.sinyal==='AL'?'var(--green)':j.sinyal==='SAT'?'var(--red)':'var(--gold)';
+      h+=`<li><span class="adot" style="background:${dot}"></span><span>${g}</span></li>`;
+    });
+    h+=`</ul></div>`;
+
+    // GÜNLÜK & HAFTALIK YAN YANA
+    const dg=j.gunluk||{},hw=j.haftalık||{};
+    const trendColor=tr=>tr==='yükselen'?'var(--green)':tr==='düşen'?'var(--red)':'var(--gold2)';
+
+    h+=`<div class="g2">
+      <div class="card">
+        <div class="card-t">Günlük Analiz</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="font-size:12px;color:var(--muted)">Trend:</span>
+          <span style="font-size:13px;font-weight:500;color:${trendColor(dg.trend)};text-transform:capitalize">${dg.trend||'—'}</span>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Destekler</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${(dg.destekler||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:6px;color:var(--green)">${d}</span>`).join('')}</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Dirençler</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${(dg.direncler||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:6px;color:var(--red)">${d}</span>`).join('')}</div>
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.5">${dg.trend_cizgisi||''}</div>
+      </div>
+      <div class="card">
+        <div class="card-t">Haftalık Analiz</div>
+        <div style="display:flex;align-items:center;gap:8px;margin-bottom:12px">
+          <span style="font-size:12px;color:var(--muted)">Trend:</span>
+          <span style="font-size:13px;font-weight:500;color:${trendColor(hw.trend)};text-transform:capitalize">${hw.trend||'—'}</span>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Destekler</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${(hw.destekler||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;background:var(--green2);border:1px solid rgba(63,184,127,.2);border-radius:6px;color:var(--green)">${d}</span>`).join('')}</div>
+        </div>
+        <div style="margin-bottom:10px">
+          <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:5px">Dirençler</div>
+          <div style="display:flex;gap:6px;flex-wrap:wrap">${(hw.direncler||[]).map(d=>`<span style="font-family:'DM Mono',monospace;font-size:12px;padding:3px 8px;background:var(--red2);border:1px solid rgba(224,85,85,.2);border-radius:6px;color:var(--red)">${d}</span>`).join('')}</div>
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.5">${hw.genel_yapi||''}</div>
+      </div>
+    </div>`;
+
+    // HAREKETLİ ORTALAMALAR & MOMENTUM
+    const ho=dg.hareketli_ort||{},mom=dg.momentum||{};
+    h+=`<div class="g2">
+      <div class="card">
+        <div class="card-t">Hareketli Ortalamalar</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          ${[['MA 20',ho.ma20],['MA 50',ho.ma50],['MA 200',ho.ma200]].map(([l,v])=>`
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--muted)">${l}</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--text)">${v||'—'}</span>
+          </div>`).join('')}
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.5">${ho.yorum||''}</div>
+      </div>
+      <div class="card">
+        <div class="card-t">Momentum Göstergeleri</div>
+        <div style="display:flex;flex-direction:column;gap:8px;margin-bottom:10px">
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--muted)">RSI (14)</span>
+            <span style="font-family:'DM Mono',monospace;color:var(--text)">${mom.rsi||'—'}</span>
+          </div>
+          <div style="display:flex;justify-content:space-between;font-size:13px">
+            <span style="color:var(--muted)">MACD</span>
+            <span style="font-family:'DM Mono',monospace;color:${mom.macd==='pozitif'?'var(--green)':mom.macd==='negatif'?'var(--red)':'var(--muted2)'}">${mom.macd||'—'}</span>
+          </div>
+        </div>
+        <div style="font-size:13px;color:var(--muted2);line-height:1.5">${mom.yorum||''}</div>
+      </div>
+    </div>`;
+
+    // KİLİT SEVİYE
+    h+=card('Kilit Fiyat Seviyesi',j.kilit_seviye,'style="border-color:rgba(201,168,76,.2)"');
+
+    // SENARYOLAR
+    h+=`<div class="srow">
+      <div class="sbull"><div class="sl">Pozitif Senaryo</div><div class="sb">${j.senaryo_pozitif}</div></div>
+      <div class="sbear"><div class="sl">Negatif Senaryo</div><div class="sb">${j.senaryo_negatif}</div></div>
+    </div>`;
+
+    $('rc9').innerHTML=h;
+    $('res9').style.display='block';
+  }catch(e){stopSpin(9);showErr(9,'Hata: '+e.message);}
+}
+
+// ─── MOD 8 ───
+async function m8(){
+  const t=($('m8t').value||'').trim().toUpperCase();
+  const tip=$('m8tip').value;
+  const ctx=$('m8ctx').value.trim();
+  if(!t)return alert('Piyasa veya hisse giriniz.');
+  startSpin(8);
+  try{
+    const bugun=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
+    const j=await callClaude(`Profesyonel trader ve analist olarak bugün (${bugun}) ${t} piyasası için yüksek olasılıklı 5 trade fırsatı belirle.
+Analiz tipi: ${tip}
+${ctx?'Ek bağlam: '+ctx:''}
+
+Her trade için hem teknik hem temel analiz perspektifinden mantığı açıkla.
+SADECE JSON döndür:
+{
+  "piyasa_ozet": "2-3 cümle bugünkü piyasa görünümü ve genel durum",
+  "tradeler": [
+    {
+      "no": 1,
+      "enstruman": "hisse/endeks/emtia adı",
+      "yon": "LONG",
+      "giris": "giriş seviyesi",
+      "hedef1": "1. kar hedefi",
+      "hedef2": "2. kar hedefi",
+      "stop": "stop loss seviyesi",
+      "rr": "risk/ödül oranı örn 1:2.5",
+      "olasilik": "yüksek/orta-yüksek/orta",
+      "teknik_mantik": "2-3 cümle teknik analiz gerekçesi — destek/direnç, formasyon, indikatör",
+      "temel_mantik": "2-3 cümle temel analiz gerekçesi — katalist, haber, sektör dinamiği",
+      "sure": "intraday/swing/kısa vade"
+    }
+  ],
+  "risk_uyari": "genel risk uyarısı 1-2 cümle"
+}
+Türkçe yaz. 5 trade ver. Gerçekçi ve uygulanabilir seviyeler öner.`);
+
+    stopSpin(8);
+    $('rl8').textContent=t+' — 5 Trade Fırsatı';
+    const dirColor=d=>d==='LONG'?'var(--green)':'var(--red)';
+    const dirBg=d=>d==='LONG'?'var(--green2)':'var(--red2)';
+    const dirBorder=d=>d==='LONG'?'rgba(63,184,127,.2)':'rgba(224,85,85,.2)';
+    const olasColor=o=>o==='yüksek'?'var(--green)':o==='orta-yüksek'?'var(--gold2)':'var(--muted2)';
+
+    let h=badge(false);
+    h+=card('Bugünkü Piyasa Görünümü',j.piyasa_ozet);
+
+    (j.tradeler||[]).forEach((t,i)=>{
+      h+=`<div class="card" style="border-color:${dirBorder(t.yon)};margin-bottom:1rem">
+        <div style="display:flex;align-items:center;gap:10px;margin-bottom:14px">
+          <div style="font-family:'DM Mono',monospace;font-size:22px;color:rgba(201,168,76,.25);font-weight:500">0${t.no}</div>
+          <div style="flex:1">
+            <div style="font-size:15px;font-weight:500;color:var(--text)">${t.enstruman}</div>
+            <div style="font-size:11px;color:var(--muted);margin-top:2px">${t.sure||''}</div>
+          </div>
+          <span style="font-size:12px;font-weight:500;padding:4px 12px;border-radius:999px;background:${dirBg(t.yon)};border:1px solid ${dirBorder(t.yon)};color:${dirColor(t.yon)}">${t.yon}</span>
+          <span style="font-size:11px;padding:3px 10px;border-radius:999px;background:var(--bg3);border:1px solid var(--border);color:${olasColor(t.olasilik)}">${t.olasilik}</span>
+        </div>
+        <div class="tlev" style="grid-template-columns:repeat(5,1fr);margin-bottom:14px">
+          <div class="lc ent"><div class="ll">Giriş</div><div class="lv" style="font-size:14px">${t.giris}</div></div>
+          <div class="lc tgt"><div class="ll">Hedef 1</div><div class="lv" style="font-size:14px">${t.hedef1}</div></div>
+          <div class="lc tgt"><div class="ll">Hedef 2</div><div class="lv" style="font-size:14px">${t.hedef2}</div></div>
+          <div class="lc stp"><div class="ll">Stop</div><div class="lv" style="font-size:14px">${t.stop}</div></div>
+          <div class="lc" style="background:var(--gold3);border:1px solid rgba(201,168,76,.2)"><div class="ll" style="color:var(--gold)">Risk/Ödül</div><div class="lv" style="font-size:14px;color:var(--gold2)">${t.rr}</div></div>
+        </div>
+        <div class="g2">
+          <div style="background:var(--bg3);border-radius:8px;padding:12px">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Teknik Analiz</div>
+            <div style="font-size:13px;color:var(--muted2);line-height:1.6">${t.teknik_mantik}</div>
+          </div>
+          <div style="background:var(--bg3);border-radius:8px;padding:12px">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:6px">Temel Analiz</div>
+            <div style="font-size:13px;color:var(--muted2);line-height:1.6">${t.temel_mantik}</div>
+          </div>
+        </div>
+      </div>`;
+    });
+
+    if(j.risk_uyari){
+      h+=`<div class="card" style="border-color:rgba(201,168,76,.2)">
+        <div class="card-t" style="color:var(--gold)">Risk Uyarısı</div>
+        <div class="card-b">${j.risk_uyari}</div>
+      </div>`;
+    }
+
+    $('rc8').innerHTML=h;
+    $('res8').style.display='block';
+  }catch(e){stopSpin(8);showErr(8,'Hata: '+e.message);}
+}
+
+function toggleTheme(){
+  const light = document.body.classList.toggle('light');
+  localStorage.setItem('ap_theme', light ? 'light' : 'dark');
+  document.getElementById('themeBtn').textContent = light ? '☽' : '☀';
+}
+// Apply saved theme on load
+(function(){
+  const saved = localStorage.getItem('ap_theme');
+  if(saved === 'light'){
+    document.body.classList.add('light');
+    const btn = document.getElementById('themeBtn');
+    if(btn) btn.textContent = '☽';
+  }
+})();
 </script>
 </body>
 </html>
