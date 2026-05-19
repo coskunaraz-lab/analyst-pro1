@@ -845,8 +845,7 @@ async function m7(){
   }catch(e){stopSpin(7);showErr(7,'Hata: '+e.message);}
 }
 
-const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7,8:m8,9:m9,10:m10,11:m11,12:m12};
-function run(n){runners[n]();}
+// runners defined below after all functions
 
 // ─── MOD 12 ───
 async function m12(){
@@ -1663,6 +1662,9 @@ Türkçe yaz. 5 trade ver. Gerçekçi ve uygulanabilir seviyeler öner.`);
     $('res8').style.display='block';
   }catch(e){stopSpin(8);showErr(8,'Hata: '+e.message);}
 }
+
+const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7,8:m8,9:m9,10:m10,11:m11,12:m12};
+function run(n){runners[n]();}
 
 function toggleTheme(){
   const light = document.body.classList.toggle('light');
