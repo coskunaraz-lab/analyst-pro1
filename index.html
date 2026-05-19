@@ -400,6 +400,20 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
   <div class="mod-tag">Modül 08</div>
   <div class="mod-title">Günlük Trade Fırsatları</div>
   <div class="mod-desc">Seçtiğiniz piyasa için yüksek olasılıklı 5 trade fırsatı — giriş, hedef, stop ve risk/ödül oranıyla.</div>
+  <div class="live-hdr" id="lh8">
+    <div class="lh-top">
+      <div><div class="lh-name" id="lh8_name">—</div><div style="margin-top:5px"><span class="lh-tag" id="lh8_ticker">—</span></div></div>
+      <div style="margin-left:auto;text-align:right"><div class="lh-price" id="lh8_price">—</div><div class="lh-chg" id="lh8_chg">—</div></div>
+    </div>
+    <div class="lh-grid">
+      <div class="lh-stat"><div class="ls-l">Günlük Yüksek</div><div class="ls-v" id="lh8_dhi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Günlük Düşük</div><div class="ls-v" id="lh8_dlo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Yüksek</div><div class="ls-v" id="lh8_hi">—</div></div>
+      <div class="lh-stat"><div class="ls-l">52H Düşük</div><div class="ls-v" id="lh8_lo">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Hacim</div><div class="ls-v" id="lh8_vol">—</div></div>
+      <div class="lh-stat"><div class="ls-l">Tarih</div><div class="ls-v" id="lh8_ts" style="font-size:10px">—</div></div>
+    </div>
+  </div>
   <div class="fr2">
     <div class="fg"><label class="fl">Piyasa / Hisse / Endeks</label><input class="fi mono" id="m8t" placeholder="BIST30, S&P500, NVDA, THYAO.IS..." onkeydown="if(event.key==='Enter')run(8)"></div>
     <div class="fg"><label class="fl">Analiz Tipi</label><select class="fi" id="m8tip">
@@ -1530,9 +1544,46 @@ async function m8(){
   const ctx=$('m8ctx').value.trim();
   if(!t)return alert('Piyasa veya hisse giriniz.');
   startSpin(8);
+
+  // Gerçek zamanlı fiyat çek
+  let liveCtx='';
+  try{
+    const ticker=t.replace('BIST30','XU030.IS').replace('S&P500','^GSPC').replace('NASDAQ','^IXIC').replace('ALTIN','GC=F').replace('BITCOIN','BTC-USD');
+    const d=await getAll(ticker);
+    const m=d.meta,s=sym(m.currency);
+    const pr=m.regularMarketPrice,prev=m.chartPreviousClose;
+    const chg=((pr-prev)/prev*100).toFixed(2);
+    const hi52=m.fiftyTwoWeekHigh,lo52=m.fiftyTwoWeekLow;
+    liveCtx=`CANLI FİYAT VERİLERİ (Yahoo Finance):
+Güncel fiyat: ${s}${fmtPr(pr)} (${chg>0?'+':''}${chg}% bugün)
+Günlük yüksek/düşük: ${s}${fmtPr(m.regularMarketDayHigh)} / ${s}${fmtPr(m.regularMarketDayLow)}
+52H yüksek/düşük: ${s}${fmtPr(hi52)} / ${s}${fmtPr(lo52)}
+Hacim: ${fmtN(m.regularMarketVolume,0)}`;
+
+    // Live header göster
+    const lh=$('lh8');
+    if(lh){
+      $('lh8_name').textContent=d.summary?.price?.longName||t;
+      $('lh8_ticker').textContent=t;
+      $('lh8_price').textContent=s+fmtPr(pr);
+      const cel=$('lh8_chg');
+      cel.textContent=(Number(chg)>=0?'+':'')+chg+'%';
+      cel.className='lh-chg '+(Number(chg)>=0?'up':'dn');
+      $('lh8_dhi').textContent=s+fmtPr(m.regularMarketDayHigh);
+      $('lh8_dlo').textContent=s+fmtPr(m.regularMarketDayLow);
+      $('lh8_hi').textContent=s+fmtPr(hi52);
+      $('lh8_lo').textContent=s+fmtPr(lo52);
+      $('lh8_vol').textContent=fmtN(m.regularMarketVolume,0);
+      $('lh8_ts').textContent='Son güncelleme: '+new Date().toLocaleTimeString('tr-TR')+' · Yahoo Finance';
+      lh.style.display='block';
+    }
+  }catch(e){console.warn('Fiyat verisi alinamadi:',e.message);}
+
   try{
     const bugun=new Date().toLocaleDateString('tr-TR',{day:'numeric',month:'long',year:'numeric'});
     const j=await callClaude(`Profesyonel trader ve analist olarak bugün (${bugun}) ${t} piyasası için yüksek olasılıklı 5 trade fırsatı belirle.
+${liveCtx?liveCtx+'
+':''}
 Analiz tipi: ${tip}
 ${ctx?'Ek bağlam: '+ctx:''}
 
