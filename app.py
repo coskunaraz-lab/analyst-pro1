@@ -279,7 +279,8 @@ class Handler(BaseHTTPRequestHandler):
         if path == '/api/quote':
             ticker = qs.get('ticker', [''])[0].upper()
             if not ticker: self.send_json({'error': 'ticker gerekli'}, 400); return
-            try: self.send_json(fetch_yahoo(f'https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range=5d'))
+            range_p = qs.get('range', ['5d'])[0]
+            try: self.send_json(fetch_yahoo(f'https://query1.finance.yahoo.com/v8/finance/chart/{ticker}?interval=1d&range={range_p}'))
             except Exception as e: self.send_json({'error': str(e)}, 500)
             return
         if path == '/api/summary':
@@ -290,6 +291,50 @@ class Handler(BaseHTTPRequestHandler):
                 self.send_json(fetch_yahoo(f'https://query1.finance.yahoo.com/v10/finance/quoteSummary/{ticker}?modules={mods}'))
             except Exception as e: self.send_json({'error': str(e)}, 500)
             return
+        if path == '/api/ohlcv':
+            ticker = qs.get('ticker', [''])[0].upper()
+            period = qs.get('period', ['3mo'])[0]
+            if not ticker:
+                self.send_json({'error': 'ticker gerekli'}, 400)
+                return
+            try:
+                bars, meta = fetch_ohlcv(ticker, period)
+                import datetime
+                self.send_json({
+                    'closes':   [b['c'] for b in bars],
+                    'opens':    [b['o'] for b in bars],
+                    'highs':    [b['h'] for b in bars],
+                    'lows':     [b['l'] for b in bars],
+                    'volumes':  [b['v'] for b in bars],
+                    'dates':    [b['t'] for b in bars],
+                    'currency': meta.get('currency', 'USD'),
+                    'name':     meta.get('longName', ticker),
+                    'symbol':   ticker,
+                })
+            except Exception as e:
+                self.send_json({'error': str(e)}, 500)
+            return
+
+        if path == '/api/ac':
+            q = qs.get('q', [''])[0].upper()
+            if not q:
+                self.send_json({'results': []})
+                return
+            try:
+                url = f'https://query1.finance.yahoo.com/v1/finance/search?q={q}&quotesCount=8&newsCount=0&enableFuzzyQuery=false'
+                data = fetch_yahoo(url)
+                results = []
+                for item in (data.get('quotes') or [])[:8]:
+                    symbol = item.get('symbol', '')
+                    name = item.get('longname') or item.get('shortname') or ''
+                    exchange = item.get('exchange', '')
+                    if symbol and name:
+                        results.append({'t': symbol, 'n': name, 'x': exchange})
+                self.send_json({'results': results})
+            except Exception as e:
+                self.send_json({'results': [], 'error': str(e)})
+            return
+
         if path == '/health':
             self.send_json({'status': 'ok', 'key': bool(API_KEY)}); return
         if path == '/api/news':
