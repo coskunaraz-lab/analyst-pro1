@@ -9,15 +9,58 @@ API_KEY = os.environ.get('ANTHROPIC_API_KEY', '')
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 YF_HEADERS = {
-    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36',
-    'Accept': 'application/json',
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,*/*;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.5',
+    'Accept-Encoding': 'gzip, deflate, br',
+    'Connection': 'keep-alive',
+    'Upgrade-Insecure-Requests': '1',
+    'Sec-Fetch-Dest': 'document',
+    'Sec-Fetch-Mode': 'navigate',
+    'Sec-Fetch-Site': 'none',
+    'Cache-Control': 'max-age=0',
+}
+
+YF_HEADERS_API = {
+    'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/124.0.0.0 Safari/537.36',
+    'Accept': 'application/json, text/plain, */*',
+    'Accept-Language': 'en-US,en;q=0.9',
+    'Accept-Encoding': 'gzip, deflate, br',
     'Referer': 'https://finance.yahoo.com/',
+    'Origin': 'https://finance.yahoo.com',
+    'Connection': 'keep-alive',
+    'Sec-Fetch-Dest': 'empty',
+    'Sec-Fetch-Mode': 'cors',
+    'Sec-Fetch-Site': 'same-site',
 }
 
 def fetch_yahoo(url):
-    req = Request(url, headers=YF_HEADERS)
-    with urlopen(req, timeout=15) as r:
-        return json.loads(r.read().decode('utf-8'))
+    # Try v8/v10 API with API headers first
+    headers = YF_HEADERS_API if '/v8/' in url or '/v10/' in url or '/v1/' in url else YF_HEADERS
+    req = Request(url, headers=headers)
+    try:
+        with urlopen(req, timeout=15) as r:
+            raw = r.read()
+            try:
+                import gzip
+                raw = gzip.decompress(raw)
+            except Exception:
+                pass
+            return json.loads(raw.decode('utf-8'))
+    except Exception as e:
+        # Fallback: try alternate Yahoo Finance API host
+        if 'query1.finance.yahoo.com' in url:
+            url2 = url.replace('query1.finance.yahoo.com', 'query2.finance.yahoo.com')
+            req2 = Request(url2, headers=headers)
+            with urlopen(req2, timeout=15) as r:
+                raw = r.read()
+                try:
+                    import gzip
+                    raw = gzip.decompress(raw)
+                except Exception:
+                    pass
+                return json.loads(raw.decode('utf-8'))
+        raise
 
 def fetch_news(query):
     news_items = []
