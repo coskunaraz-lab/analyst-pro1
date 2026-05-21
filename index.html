@@ -211,6 +211,24 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
   .r-ticker{font-family:'DM Mono',monospace;font-weight:500;color:var(--gold2)}
   .r-name{font-size:12px;color:var(--muted2);max-width:150px;overflow:hidden;text-overflow:ellipsis}
   .r-val{font-family:'DM Mono',monospace;font-size:12px}
+
+  /* Detail page tabs */
+  .detail-tab{padding:9px 18px;cursor:pointer;font-size:13px;color:var(--muted2);border-bottom:2px solid transparent;transition:all .15s;white-space:nowrap;flex-shrink:0}
+  .detail-tab:hover{color:var(--text)}
+  .detail-tab.active{color:var(--gold2);border-bottom-color:var(--gold);font-weight:500}
+  .detail-content{display:block}
+  .fin-table{width:100%;border-collapse:collapse;font-size:13px}
+  .fin-table th{text-align:left;padding:8px 12px;border-bottom:1.5px solid var(--border);color:var(--muted);font-size:11px;font-weight:400;background:var(--bg3)}
+  .fin-table td{padding:8px 12px;border-bottom:1px solid var(--border)}
+  .fin-table tr:hover td{background:var(--bg3)}
+  .fin-table td:first-child{color:var(--text);font-weight:500}
+  .fin-table td:not(:first-child){font-family:'DM Mono',monospace;text-align:right;color:var(--muted2)}
+  .fin-table .pos{color:var(--green)}.fin-table .neg{color:var(--red)}
+  .ownership-bar{height:24px;border-radius:6px;overflow:hidden;display:flex;margin-top:6px}
+
+  .d22-range-btn{padding:4px 10px;font-size:11px;background:var(--bg3);border:1px solid var(--border);border-radius:6px;cursor:pointer;color:var(--muted2);font-family:'DM Mono',monospace;transition:all .15s}
+  .d22-range-btn:hover{border-color:var(--gold);color:var(--gold2)}
+  .d22-range-btn.active{background:var(--gold3);border-color:var(--gold);color:var(--gold2)}
 </style>
 </head>
 <body>
@@ -247,6 +265,7 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div class="nav-item" onclick="showMod(19,this)"><span class="nav-num">19</span>Kripto Analiz</div>
     <div class="nav-item" onclick="showMod(20,this)"><span class="nav-num">20</span>Finansal Eğitim</div>
     <div class="nav-item" onclick="showMod(21,this);initRadar()"><span class="nav-num">21</span>Hisse Radar ★</div>
+    <div class="nav-item" onclick="showMod(22,this)"><span class="nav-num">22</span>Hisse Detay</div>
   </nav>
   <div class="sidebar-ft">Yatırım tavsiyesi değildir.<br>Eğitim amaçlıdır.</div>
 </aside>
@@ -1149,6 +1168,88 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
   </div>
 </div>
 
+<!-- MOD 22 — HİSSE DETAY SAYFASI -->
+<div class="module" id="mod22">
+  <div class="mod-tag">Modül 22</div>
+  <div class="mod-title">Hisse Detay Sayfası</div>
+  <div class="mod-desc">Hisse için kapsamlı detay — fiyat, bilanço, gelir tablosu, nakit akım, haberler, ortaklık ve temettü.</div>
+
+  <div class="fg">
+    <label class="fl">Hisse Kodu</label>
+    <div class="ac-wrap">
+      <input class="fi mono" id="m22t" placeholder="THYAO.IS, AAPL, NVDA..."
+        maxlength="12" autocomplete="off"
+        oninput="acSearch(this,'m22t_ac')"
+        onkeydown="acKey(event,'m22t_ac');if(event.key==='Enter'&&!document.getElementById('m22t_ac').classList.contains('show'))run(22)"
+        onblur="setTimeout(()=>acHide('m22t_ac'),200)">
+      <div class="ac-list" id="m22t_ac"></div>
+    </div>
+  </div>
+
+  <div class="chips"><span class="cl">Hızlı:</span>
+    <span class="chip" onclick="sv('m22t','THYAO.IS');run(22)">THYAO</span>
+    <span class="chip" onclick="sv('m22t','ASELS.IS');run(22)">ASELS</span>
+    <span class="chip" onclick="sv('m22t','EREGL.IS');run(22)">EREGL</span>
+    <span class="chip" onclick="sv('m22t','AAPL');run(22)">AAPL</span>
+    <span class="chip" onclick="sv('m22t','NVDA');run(22)">NVDA</span>
+    <span class="chip" onclick="sv('m22t','TSLA');run(22)">TSLA</span>
+  </div>
+
+  <button class="btn" id="btn22" onclick="run(22)">Detay Sayfasını Aç →</button>
+  <div class="err-box" id="err22"></div>
+  <div class="spin-wrap" id="spin22"><div class="spinner"></div><p class="spin-msg" id="sm22">Hisse verisi çekiliyor...</p></div>
+
+  <!-- DETAY SAYFASI -->
+  <div id="res22" style="display:none">
+
+    <!-- HEADER — Fiyat kartı -->
+    <div id="d22_header" style="background:var(--bg2);border:1px solid var(--border);border-radius:14px;padding:1.5rem;margin-bottom:1rem">
+      <div style="display:flex;align-items:flex-start;gap:1rem;flex-wrap:wrap">
+        <!-- Logo placeholder -->
+        <div id="d22_logo" style="width:52px;height:52px;border-radius:12px;background:var(--bg3);border:1px solid var(--border);display:flex;align-items:center;justify-content:center;font-family:'DM Mono',monospace;font-size:11px;color:var(--gold2);font-weight:500;flex-shrink:0"></div>
+        <div style="flex:1;min-width:200px">
+          <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
+            <div id="d22_name" style="font-family:'Playfair Display',serif;font-size:22px;color:var(--text)"></div>
+            <div id="d22_ticker_badge" style="font-family:'DM Mono',monospace;font-size:12px;color:var(--gold2);background:var(--gold3);border:1px solid rgba(201,168,76,.2);padding:3px 10px;border-radius:999px"></div>
+            <div id="d22_exchange" style="font-size:11px;color:var(--muted);background:var(--bg3);padding:3px 8px;border-radius:999px"></div>
+          </div>
+          <div id="d22_sector" style="font-size:13px;color:var(--muted2);margin-top:4px"></div>
+        </div>
+        <div style="text-align:right;min-width:160px">
+          <div id="d22_price" style="font-family:'DM Mono',monospace;font-size:36px;font-weight:500;color:var(--text)"></div>
+          <div id="d22_change" style="font-size:14px;font-family:'DM Mono',monospace;margin-top:2px"></div>
+          <div id="d22_updated" style="font-size:10px;color:var(--muted);margin-top:4px"></div>
+        </div>
+      </div>
+
+      <!-- Quick stats row -->
+      <div style="display:grid;grid-template-columns:repeat(6,1fr);gap:8px;margin-top:1.25rem" id="d22_quick_stats"></div>
+    </div>
+
+    <!-- TAB NAVİGASYONU -->
+    <div style="display:flex;gap:0;border-bottom:1px solid var(--border);margin-bottom:1.25rem;overflow-x:auto">
+      <div class="detail-tab active" onclick="showDetailTab('ozet')"    id="dtab_ozet">    Özet</div>
+      <div class="detail-tab"        onclick="showDetailTab('finansal')" id="dtab_finansal">Finansal</div>
+      <div class="detail-tab"        onclick="showDetailTab('bilanco')"  id="dtab_bilanco"> Bilanço</div>
+      <div class="detail-tab"        onclick="showDetailTab('nakit')"    id="dtab_nakit">   Nakit Akım</div>
+      <div class="detail-tab"        onclick="showDetailTab('temettu')"  id="dtab_temettu"> Temettü</div>
+      <div class="detail-tab"        onclick="showDetailTab('haber')"    id="dtab_haber">   Haberler</div>
+      <div class="detail-tab"        onclick="showDetailTab('sirket')"   id="dtab_sirket">  Şirket</div>
+      <div class="detail-tab"        onclick="showDetailTab('analiz')"   id="dtab_analiz">  AI Analiz</div>
+    </div>
+
+    <!-- TAB İÇERİKLERİ -->
+    <div id="dtab_content_ozet"    class="detail-content active"></div>
+    <div id="dtab_content_finansal" class="detail-content" style="display:none"></div>
+    <div id="dtab_content_bilanco"  class="detail-content" style="display:none"></div>
+    <div id="dtab_content_nakit"    class="detail-content" style="display:none"></div>
+    <div id="dtab_content_temettu"  class="detail-content" style="display:none"></div>
+    <div id="dtab_content_haber"    class="detail-content" style="display:none"></div>
+    <div id="dtab_content_sirket"   class="detail-content" style="display:none"></div>
+    <div id="dtab_content_analiz"   class="detail-content" style="display:none"></div>
+  </div>
+</div>
+
 </main>
 
 <script>
@@ -1174,7 +1275,8 @@ const spinT = {
   18:['Endeks verileri çekiliyor...','Piyasa özeti hazırlanıyor...'],
   19:['Kripto verileri çekiliyor...','Analiz yapılıyor...','Sinyaller üretiliyor...'],
   20:['Konu hazırlanıyor...','İçerik oluşturuluyor...'],
-  21:['Hisse verileri çekiliyor...','Tablo güncelleniyor...']
+  21:['Hisse verileri çekiliyor...','Tablo güncelleniyor...'],
+  22:['Hisse verisi çekiliyor...','Finansal tablolar hazırlanıyor...','Detay sayfası oluşturuluyor...']
 };
 let spInt={};
 const $=id=>document.getElementById(id);
@@ -2274,7 +2376,7 @@ Hacim: ${fmtN(m.regularMarketVolume,0)}`;
   }catch(e){stopSpin(8);showErr(8,'Hata: '+e.message);}
 }
 
-const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7,8:m8,9:m9,10:m10,11:m11,12:m12,13:m13,14:m14,15:m15,16:m16,17:m17,18:m18,19:m19,20:m20,21:m21};
+const runners={1:m1,2:m2,3:m3,4:m4,5:m5,6:m6,7:m7,8:m8,9:m9,10:m10,11:m11,12:m12,13:m13,14:m14,15:m15,16:m16,17:m17,18:m18,19:m19,20:m20,21:m21,22:m22};
 function run(n){runners[n]();}
 
 
@@ -4105,6 +4207,694 @@ function radarRowClick(ticker) {
 }
 
 function m21() { initRadar(); }
+
+
+// ══════════════════════════════════════════
+// MOD 22 — HİSSE DETAY SAYFASI
+// ══════════════════════════════════════════
+
+let d22_data = null; // cached live data
+let d22_ticker = '';
+let d22_ai_cache = {};
+
+function showDetailTab(tab) {
+  document.querySelectorAll('.detail-tab').forEach(t => t.classList.remove('active'));
+  document.querySelectorAll('.detail-content').forEach(c => c.style.display = 'none');
+  document.getElementById('dtab_' + tab)?.classList.add('active');
+  const content = document.getElementById('dtab_content_' + tab);
+  if (content) content.style.display = 'block';
+
+  // Lazy load AI analysis tab
+  if (tab === 'analiz' && d22_data && !d22_ai_cache[d22_ticker]) {
+    loadD22AI();
+  }
+}
+
+async function m22() {
+  const t = ($('m22t').value || '').trim().toUpperCase();
+  if (!t) return alert('Hisse kodu giriniz.');
+  d22_ticker = t;
+  startSpin(22);
+
+  try {
+    const [liveD, newsD] = await Promise.all([
+      getAll(t),
+      fetch(`/api/news?q=${encodeURIComponent(t)}`).then(r=>r.json()).catch(()=>({news:[]}))
+    ]);
+
+    d22_data = liveD;
+    stopSpin(22);
+    $('res22').style.display = 'block';
+
+    const meta = liveD.meta;
+    const sum  = liveD.summary;
+    const pr   = sum?.price || {};
+    const fd   = sum?.financialData || {};
+    const ks   = sum?.defaultKeyStatistics || {};
+    const sd   = sum?.summaryDetail || {};
+    const ap   = sum?.assetProfile || {};
+    const s    = meta.currency === 'TRY' ? '₺' : meta.currency === 'EUR' ? '€' : '$';
+    const price = meta.regularMarketPrice;
+    const prev  = meta.chartPreviousClose;
+    const chg   = price - prev;
+    const chgP  = (chg / prev * 100).toFixed(2);
+    const isUp  = price >= prev;
+
+    // ── HEADER ────────────────────────────
+    const shortName = t.replace('.IS','').replace('-USD','').substring(0,4);
+    $('d22_logo').textContent = shortName;
+    $('d22_name').textContent = pr.longName || pr.shortName || t;
+    $('d22_ticker_badge').textContent = t;
+    $('d22_exchange').textContent = meta.exchangeName || meta.fullExchangeName || '';
+    $('d22_sector').textContent = (ap.sector || '') + (ap.industry ? ' · ' + ap.industry : '');
+    $('d22_price').textContent = s + price.toFixed(price > 100 ? 2 : 4);
+    const chgEl = $('d22_change');
+    chgEl.textContent = (chg >= 0 ? '+' : '') + chg.toFixed(2) + ' (' + (chg >= 0 ? '+' : '') + chgP + '%)';
+    chgEl.style.color = isUp ? 'var(--green)' : 'var(--red)';
+    $('d22_updated').textContent = 'Son güncelleme: ' + new Date().toLocaleTimeString('tr-TR') + ' · Yahoo Finance';
+
+    // Quick stats
+    const qStats = [
+      ['Açılış',    s + (meta.chartPreviousClose || '—')],
+      ['Günlük Y.', s + (meta.regularMarketDayHigh?.toFixed(2) || '—')],
+      ['Günlük D.', s + (meta.regularMarketDayLow?.toFixed(2) || '—')],
+      ['52H Yük.',  s + (meta.fiftyTwoWeekHigh?.toFixed(2) || sd.fiftyTwoWeekHigh?.raw?.toFixed(2) || '—')],
+      ['52H Düş.',  s + (meta.fiftyTwoWeekLow?.toFixed(2) || sd.fiftyTwoWeekLow?.raw?.toFixed(2) || '—')],
+      ['Hacim',     fmtN(meta.regularMarketVolume, 0)],
+    ];
+    $('d22_quick_stats').innerHTML = qStats.map(([l,v]) =>
+      `<div style="background:var(--bg3);border-radius:7px;padding:.6rem .75rem">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:3px">${l}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;color:var(--text)">${v}</div>
+      </div>`
+    ).join('');
+
+    // ── ÖZET TABİ ────────────────────────
+    const ozetRows = [
+      ['Piyasa Değeri', fmtN(pr.marketCap?.raw)],
+      ['F/K Oranı (TTM)', fmtN(sd.trailingPE?.raw, 1)],
+      ['F/K Oranı (İleriye)', fmtN(sd.forwardPE?.raw, 1)],
+      ['Fiyat/Defter', fmtN(ks.priceToBook?.raw, 2)],
+      ['FD/FAVÖK', fmtN(ks.enterpriseToEbitda?.raw, 1)],
+      ['EPS (TTM)', s + fmtN(ks.trailingEps?.raw, 2)],
+      ['Hisse Başı Temettü', sd.dividendRate?.raw ? s + sd.dividendRate.raw.toFixed(2) : '—'],
+      ['Temettü Verimi', sd.dividendYield?.raw ? fmtP(sd.dividendYield.raw) : '—'],
+      ['Beta', fmtN(sd.beta?.raw || ks.beta?.raw, 2)],
+      ['Ort. Hacim (30G)', fmtN(sd.averageVolume?.raw, 0)],
+      ['Dolaşımdaki Hisse', fmtN(pr.sharesOutstanding?.raw || ks.sharesOutstanding?.raw)],
+      ['Analist Hedef (Ort.)', fd.targetMeanPrice?.raw ? s + fd.targetMeanPrice.raw.toFixed(2) : '—'],
+      ['Analist Öneri', fd.recommendationKey?.toUpperCase() || '—'],
+    ];
+
+    const finSummary = [
+      ['Toplam Gelir (TTM)', fmtN(fd.totalRevenue?.raw)],
+      ['Brüt Kar', fmtN(fd.grossProfits?.raw)],
+      ['FAVÖK', fmtN(fd.ebitda?.raw)],
+      ['Brüt Marj', fmtP(fd.grossMargins?.raw)],
+      ['Faaliyet Marjı', fmtP(fd.operatingMargins?.raw)],
+      ['Net Marj', fmtP(fd.profitMargins?.raw)],
+      ['ROE', fmtP(fd.returnOnEquity?.raw)],
+      ['ROA', fmtP(fd.returnOnAssets?.raw)],
+      ['Serbest Nakit Akışı', fmtN(fd.freeCashflow?.raw)],
+      ['Toplam Nakit', fmtN(fd.totalCash?.raw)],
+      ['Toplam Borç', fmtN(fd.totalDebt?.raw)],
+      ['Borç/Özsermaye', fmtN(ks.debtToEquity?.raw, 2)],
+    ];
+
+    $('dtab_content_ozet').innerHTML = `
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Değerleme Metrikleri</div>
+          <table class="fin-table">
+            ${ozetRows.map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-t">Finansal Özet</div>
+          <table class="fin-table">
+            ${finSummary.map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>`;
+
+    // ── FİNANSAL TABİ (Gelir Tablosu) ────
+    const incomeRows = [
+      ['Toplam Gelir',          fmtN(fd.totalRevenue?.raw),         fmtP(fd.revenueGrowth?.raw)],
+      ['Brüt Kar',              fmtN(fd.grossProfits?.raw),          fmtP(fd.grossMargins?.raw)],
+      ['Faaliyet Giderleri',    '—',                                  '—'],
+      ['FAVÖK',                 fmtN(fd.ebitda?.raw),                '—'],
+      ['Faaliyet Karı',         fmtN(fd.operatingCashflow?.raw),     fmtP(fd.operatingMargins?.raw)],
+      ['Net Kar',               fmtN(ks.netIncomeToCommon?.raw),     fmtP(fd.profitMargins?.raw)],
+      ['EPS',                   s+fmtN(ks.trailingEps?.raw,2),       '—'],
+    ];
+
+    $('dtab_content_finansal').innerHTML = `
+      <div class="card">
+        <div class="card-t">Gelir Tablosu (TTM)</div>
+        <table class="fin-table">
+          <thead><tr>
+            <th>Kalem</th><th style="text-align:right">Değer</th><th style="text-align:right">Büyüme / Marj</th>
+          </tr></thead>
+          <tbody>
+            ${incomeRows.map(([l,v,b])=>`
+            <tr>
+              <td>${l}</td>
+              <td>${v}</td>
+              <td class="${b&&b.startsWith('+')&&!b.startsWith('+-')?'pos':b&&b.startsWith('-')?'neg':''}">${b||'—'}</td>
+            </tr>`).join('')}
+          </tbody>
+        </table>
+      </div>
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Karlılık Oranları</div>
+          <table class="fin-table">
+            ${[
+              ['Brüt Kar Marjı', fmtP(fd.grossMargins?.raw)],
+              ['Faaliyet Marjı', fmtP(fd.operatingMargins?.raw)],
+              ['Net Kar Marjı',  fmtP(fd.profitMargins?.raw)],
+              ['FAVÖK Marjı',    fd.ebitda?.raw && fd.totalRevenue?.raw ? fmtP(fd.ebitda.raw/fd.totalRevenue.raw) : '—'],
+              ['ROE',            fmtP(fd.returnOnEquity?.raw)],
+              ['ROA',            fmtP(fd.returnOnAssets?.raw)],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-t">Büyüme Oranları</div>
+          <table class="fin-table">
+            ${[
+              ['Gelir Büyümesi (YoY)',   fmtP(fd.revenueGrowth?.raw)],
+              ['Kazanç Büyümesi (YoY)',  fmtP(fd.earningsGrowth?.raw)],
+              ['EPS Büyümesi (5Y)',      fmtP(ks.fiveYearAverageReturn?.raw)],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>`;
+
+    // ── BİLANÇO TABİ ─────────────────────
+    $('dtab_content_bilanco').innerHTML = `
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Aktifler</div>
+          <table class="fin-table">
+            ${[
+              ['Toplam Nakit & Eşd.', fmtN(fd.totalCash?.raw)],
+              ['Nakit / Hisse',       fd.totalCashPerShare?.raw ? s+fd.totalCashPerShare.raw.toFixed(2) : '—'],
+              ['Toplam Varlıklar',    '—'],
+              ['Maddi Duran V.',      '—'],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="card">
+          <div class="card-t">Pasifler & Özsermaye</div>
+          <table class="fin-table">
+            ${[
+              ['Kısa Vadeli Borç',    '—'],
+              ['Uzun Vadeli Borç',    fmtN(fd.totalDebt?.raw)],
+              ['Toplam Borç',         fmtN(fd.totalDebt?.raw)],
+              ['Borç/Özsermaye',      fmtN(ks.debtToEquity?.raw,2)],
+              ['Likit Oran',          fmtN(fd.quickRatio?.raw,2)],
+              ['Cari Oran',           fmtN(fd.currentRatio?.raw,2)],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+      </div>`;
+
+    // ── NAKİT AKIM TABİ ──────────────────
+    $('dtab_content_nakit').innerHTML = `
+      <div class="card">
+        <div class="card-t">Nakit Akım Tablosu (TTM)</div>
+        <table class="fin-table">
+          <thead><tr><th>Kalem</th><th style="text-align:right">Değer</th></tr></thead>
+          <tbody>
+            ${[
+              ['İşletme Faaliyetleri NK',  fmtN(fd.operatingCashflow?.raw)],
+              ['Serbest Nakit Akışı',      fmtN(fd.freeCashflow?.raw)],
+              ['Hisse Başı Serbest NK',    fd.freeCashflow?.raw && (pr.sharesOutstanding?.raw||ks.sharesOutstanding?.raw) ?
+                s+(fd.freeCashflow.raw/(pr.sharesOutstanding?.raw||ks.sharesOutstanding?.raw)).toFixed(2) : '—'],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </tbody>
+        </table>
+      </div>`;
+
+    // ── TEMETTÜ TABİ ─────────────────────
+    const divRate = sd.dividendRate?.raw;
+    const divYld  = sd.dividendYield?.raw;
+    const exDiv   = sd.exDividendDate?.raw;
+
+    $('dtab_content_temettu').innerHTML = `
+      <div class="g2">
+        <div class="card">
+          <div class="card-t">Temettü Bilgileri</div>
+          <table class="fin-table">
+            ${[
+              ['Yıllık Temettü',       divRate ? s+divRate.toFixed(2) : '—'],
+              ['Temettü Verimi',       divYld ? fmtP(divYld) : '—'],
+              ['Ex-Temettü Tarihi',    exDiv ? new Date(exDiv*1000).toLocaleDateString('tr-TR') : '—'],
+              ['Ödeme Oranı (Payout)', fmtP(sd.payoutRatio?.raw)],
+              ['5Y Ort. Temettü V.',   fmtP(sd.fiveYearAvgDividendYield?.raw ? sd.fiveYearAvgDividendYield.raw/100 : null)],
+            ].map(([l,v])=>`<tr><td>${l}</td><td>${v}</td></tr>`).join('')}
+          </table>
+        </div>
+        <div class="card" style="display:flex;flex-direction:column;align-items:center;justify-content:center;padding:2rem">
+          ${divYld ? `
+          <div style="font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:1px;margin-bottom:8px">Temettü Verimi</div>
+          <div style="font-size:52px;font-weight:600;color:var(--green);font-family:'Playfair Display',serif">${fmtP(divYld)}</div>
+          <div style="font-size:13px;color:var(--muted2);margin-top:8px">Yıllık ${divRate?s+divRate.toFixed(2)+' / hisse':''}</div>
+          ` : `<div style="font-size:14px;color:var(--muted)">Bu hisse temettü ödememektedir</div>`}
+        </div>
+      </div>`;
+
+    // ── HABERLER TABİ ─────────────────────
+    const news = newsD.news || [];
+    if (news.length > 0) {
+      $('dtab_content_haber').innerHTML = `
+        <div class="card">
+          <div class="card-t">Son Haberler</div>
+          ${news.map(n => {
+            const ts = n.time ? new Date(n.time*1000).toLocaleDateString('tr-TR', {day:'numeric',month:'long'}) : '';
+            return `<div style="padding:12px 0;border-bottom:1px solid var(--border);display:flex;gap:12px;align-items:flex-start">
+              <div style="flex:1">
+                <div style="font-size:14px;font-weight:500;color:var(--text);line-height:1.4;margin-bottom:4px">${n.title}</div>
+                <div style="font-size:12px;color:var(--muted)">${n.source||''}${ts?' · '+ts:''}</div>
+              </div>
+              ${n.url?`<a href="${n.url}" target="_blank" style="font-size:12px;color:var(--blue);white-space:nowrap;text-decoration:none;flex-shrink:0;padding-top:2px">Oku →</a>`:''}
+            </div>`;
+          }).join('')}
+        </div>`;
+    } else {
+      $('dtab_content_haber').innerHTML = `<div class="card"><div style="text-align:center;padding:2rem;color:var(--muted)">Haber bulunamadı</div></div>`;
+    }
+
+    // ── ŞİRKET TABİ ─────────────────────
+    const employees = ap.fullTimeEmployees;
+    $('dtab_content_sirket').innerHTML = `
+      <div class="card">
+        <div class="card-t">Şirket Hakkında</div>
+        <div style="font-size:14px;color:var(--text);line-height:1.75;margin-bottom:1.25rem">${ap.longBusinessSummary || 'Şirket bilgisi mevcut değil.'}</div>
+        <div style="display:grid;grid-template-columns:repeat(3,1fr);gap:10px">
+          ${[
+            ['Sektör',      ap.sector||'—'],
+            ['Endüstri',    ap.industry||'—'],
+            ['Çalışan',     employees ? employees.toLocaleString('tr-TR') : '—'],
+            ['Website',     ap.website ? `<a href="${ap.website}" target="_blank" style="color:var(--blue)">${ap.website.replace('https://','')}</a>` : '—'],
+            ['Şehir',       ap.city ? (ap.city + (ap.country?', '+ap.country:'')) : '—'],
+            ['Borsa',       meta.fullExchangeName||'—'],
+          ].map(([l,v])=>`
+          <div style="background:var(--bg3);border-radius:8px;padding:.75rem">
+            <div style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px;margin-bottom:4px">${l}</div>
+            <div style="font-size:13px;color:var(--text)">${v}</div>
+          </div>`).join('')}
+        </div>
+      </div>`;
+
+    // ── AI ANALİZ TABİ (lazy) ─────────────
+    $('dtab_content_analiz').innerHTML = `
+      <div style="padding:2rem;text-align:center;color:var(--muted2)">
+        <div style="font-size:14px;margin-bottom:8px">AI Analiz</div>
+        <div style="font-size:13px;margin-bottom:16px">Bu sekmeye geçince otomatik yüklenir</div>
+        <button class="btn" onclick="loadD22AI()" style="padding:10px 20px">AI Analizi Başlat →</button>
+      </div>`;
+
+    // Quarterly bar charts
+    loadD22QuarterlyCharts();
+
+    // Getiri çubukları
+    loadD22Returns(t, s);
+
+    // Mum grafiği
+    d22_sym = t;
+    setTimeout(() => drawD22Candles(t, d22_range), 200);
+
+    // Default tab
+    showDetailTab('ozet');
+
+  } catch(e) { stopSpin(22); showErr(22, 'Hata: ' + e.message); }
+}
+
+async function loadD22AI() {
+  if (!d22_data) return;
+  const t = d22_ticker;
+  if (d22_ai_cache[t]) {
+    $('dtab_content_analiz').innerHTML = d22_ai_cache[t];
+    return;
+  }
+
+  $('dtab_content_analiz').innerHTML = `<div style="padding:2rem;text-align:center"><div class="spinner" style="margin:0 auto 12px"></div><div style="font-size:13px;color:var(--muted2)">AI analiz hazırlanıyor...</div></div>`;
+
+  try {
+    const fd = d22_data.summary?.financialData||{};
+    const ks = d22_data.summary?.defaultKeyStatistics||{};
+    const sd = d22_data.summary?.summaryDetail||{};
+    const pr = d22_data.summary?.price||{};
+    const s  = d22_data.meta.currency==='TRY'?'₺':'$';
+    const price = d22_data.meta.regularMarketPrice;
+
+    const j = await callClaude(
+      `Hisse senedi analisti olarak ${t} icin kapsamli analiz yap. Mevcut fiyat: ${s}${price.toFixed(2)}.` +
+      ` F/K: ${fmtN(sd.trailingPE?.raw,1)}, ROE: ${fmtP(fd.returnOnEquity?.raw)}, Net Marj: ${fmtP(fd.profitMargins?.raw)}.` +
+      ` SADECE JSON:\n{"ozet":"yonetici ozeti 3-4 cumle","guclu":["g1","g2","g3"],"zayif":["z1","z2","z3"],"firsat":"en buyuk firsat 2 cumle","tehdit":"en buyuk tehdit 2 cumle","degerle me":"hisse ucuz/makul/pahali ve neden 2 cumle","hedef_fiyat":"12 aylik hedef fiyat","sinyal":"AL/TUT/SAT","sinyal_gerekce":"2-3 cumle"}\nTurkce yaz.`
+    );
+
+    const sigCol = s2 => s2==='AL'?'var(--green)':s2==='SAT'?'var(--red)':'var(--gold2)';
+    const sigBg  = s2 => s2==='AL'?'var(--green2)':s2==='SAT'?'var(--red2)':'var(--gold3)';
+
+    let html = `
+      <div class="card" style="background:${sigBg(j.sinyal)};border-color:${sigCol(j.sinyal)}30;text-align:center;padding:1.5rem;margin-bottom:1rem">
+        <div style="font-size:11px;color:${sigCol(j.sinyal)};text-transform:uppercase;letter-spacing:1.5px;margin-bottom:6px">AI Sinyali</div>
+        <div style="font-size:40px;font-weight:600;color:${sigCol(j.sinyal)};font-family:'Playfair Display',serif;margin-bottom:4px">${j.sinyal}</div>
+        <div style="font-size:13px;color:var(--muted2)">${j.sinyal_gerekce}</div>
+        ${j.hedef_fiyat?`<div style="margin-top:10px;font-family:'DM Mono',monospace;font-size:14px;color:var(--text)">Hedef Fiyat: ${j.hedef_fiyat}</div>`:''}
+      </div>
+      ${card('Yönetici Özeti', j.ozet)}
+      <div class="g2">
+        <div class="card"><div class="card-t">Güçlü Yönler</div><ul class="adv-list">
+          ${(j.guclu||[]).map(g=>`<li><span class="adot"></span><span>${g}</span></li>`).join('')}
+        </ul></div>
+        <div class="card"><div class="card-t">Zayıf Yönler</div><ul class="adv-list">
+          ${(j.zayif||[]).map(z=>`<li><span class="adot" style="background:var(--red)"></span><span>${z}</span></li>`).join('')}
+        </ul></div>
+      </div>
+      <div class="g2">
+        ${card('En Büyük Fırsat', j.firsat, 'style="border-color:rgba(63,184,127,.2)"')}
+        ${card('En Büyük Tehdit', j.tehdit, 'style="border-color:rgba(224,85,85,.2)"')}
+      </div>
+      ${card('Değerleme', j.degerle_me||j.degerleme)}`;
+
+    $('dtab_content_analiz').innerHTML = html;
+    d22_ai_cache[t] = html;
+  } catch(e) {
+    $('dtab_content_analiz').innerHTML = `<div class="err-box" style="display:block">AI hatası: ${e.message}</div>`;
+  }
+}
+
+
+// ══════════════════════════════════════════
+// MOD 22 — MUM GRAFİĞİ & ÇEYREKLİK GRAFİKLER
+// ══════════════════════════════════════════
+
+let d22_range = '1mo';
+let d22_sym = '';
+
+function setD22Range(range) {
+  d22_range = range;
+  document.querySelectorAll('.d22-range-btn').forEach(b => b.classList.remove('active'));
+  document.querySelectorAll('.d22-range-btn').forEach(b => {
+    if (b.textContent === {
+      '1mo':'1A','3mo':'3A','6mo':'6A','1y':'1Y','2y':'2Y','5y':'5Y'
+    }[range]) b.classList.add('active');
+  });
+  drawD22Candles(d22_sym, range);
+}
+
+async function drawD22Candles(ticker, range) {
+  if (!ticker) return;
+  d22_sym = ticker;
+  const canvas = document.getElementById('d22_candle_chart');
+  if (!canvas) return;
+
+  // Show loading
+  const lbl = document.getElementById('d22_chart_lbl');
+  if (lbl) lbl.textContent = 'Yükleniyor...';
+
+  try {
+    const r = await fetch(`/api/ohlcv?ticker=${encodeURIComponent(ticker)}&period=${range}`);
+    const d = await r.json();
+    if (d.error) throw new Error(d.error);
+
+    const closes  = d.closes;
+    const opens   = d.opens;
+    const highs   = d.highs;
+    const lows    = d.lows;
+    const volumes = d.volumes;
+    const dates   = d.dates;
+    const n = closes.length;
+    if (n < 2) return;
+
+    const s = d.currency === 'TRY' ? '₺' : d.currency === 'EUR' ? '€' : '$';
+    const lastClose = closes[n-1];
+    const firstClose = closes[0];
+    const totalChg = ((lastClose - firstClose) / firstClose * 100).toFixed(2);
+    if (lbl) lbl.textContent = `${ticker} · ${s}${lastClose.toFixed(2)} · ${totalChg > 0 ? '+' : ''}${totalChg}%`;
+
+    // Setup canvas
+    const W = canvas.parentElement.offsetWidth - 32;
+    const H = 280;
+    const DPR = window.devicePixelRatio || 1;
+    canvas.width  = W * DPR;
+    canvas.height = H * DPR;
+    canvas.style.width  = W + 'px';
+    canvas.style.height = H + 'px';
+    const ctx = canvas.getContext('2d');
+    ctx.scale(DPR, DPR);
+
+    // Theme colors
+    const isDark = !document.body.classList.contains('light');
+    const bgColor     = isDark ? '#18181c' : '#f0ede6';
+    const gridColor   = isDark ? 'rgba(255,255,255,0.05)' : 'rgba(0,0,0,0.06)';
+    const textColor   = isDark ? '#5a5a64' : '#9a9896';
+    const upColor     = '#3fb87f';
+    const downColor   = '#e05555';
+    const volUpColor  = 'rgba(63,184,127,0.3)';
+    const volDnColor  = 'rgba(224,85,85,0.3)';
+
+    // Layout
+    const PAD = { t: 20, r: 60, b: 60, l: 10 };
+    const volH = 50;
+    const priceH = H - PAD.t - PAD.b - volH - 8;
+    const chartW = W - PAD.l - PAD.r;
+
+    ctx.fillStyle = bgColor;
+    ctx.fillRect(0, 0, W, H);
+
+    // Price range
+    const maxP = Math.max(...highs);
+    const minP = Math.min(...lows);
+    const padP = (maxP - minP) * 0.05;
+    const pMax = maxP + padP, pMin = minP - padP;
+
+    // Volume range
+    const maxV = Math.max(...volumes);
+
+    // Scales
+    const xScale  = i => PAD.l + (i + 0.5) / n * chartW;
+    const yPrice  = v => PAD.t + priceH - ((v - pMin) / (pMax - pMin)) * priceH;
+    const yVol    = v => H - PAD.b - (v / maxV) * volH;
+    const candleW = Math.max(2, (chartW / n) * 0.7);
+
+    // Grid lines
+    ctx.strokeStyle = gridColor;
+    ctx.lineWidth = 0.5;
+    for (let i = 0; i <= 4; i++) {
+      const y = PAD.t + (i / 4) * priceH;
+      ctx.beginPath(); ctx.moveTo(PAD.l, y); ctx.lineTo(PAD.l + chartW, y); ctx.stroke();
+      const val = pMax - (i / 4) * (pMax - pMin);
+      ctx.fillStyle = textColor;
+      ctx.font = `10px 'DM Mono', monospace`;
+      ctx.textAlign = 'left';
+      ctx.fillText(val.toFixed(val > 100 ? 1 : 3), PAD.l + chartW + 4, y + 4);
+    }
+
+    // X axis labels
+    const step = Math.max(1, Math.floor(n / 8));
+    dates.forEach((ts, i) => {
+      if (i % step !== 0 && i !== n-1) return;
+      const dt = new Date(ts * 1000);
+      const label = (dt.getMonth()+1) + '/' + dt.getDate();
+      const x = xScale(i);
+      ctx.fillStyle = textColor;
+      ctx.font = `9px 'DM Mono', monospace`;
+      ctx.textAlign = 'center';
+      ctx.fillText(label, x, H - PAD.b + 14);
+      // Vertical grid
+      ctx.strokeStyle = gridColor;
+      ctx.lineWidth = 0.5;
+      ctx.beginPath(); ctx.moveTo(x, PAD.t); ctx.lineTo(x, PAD.t + priceH); ctx.stroke();
+    });
+
+    // Volume bars
+    volumes.forEach((v, i) => {
+      if (v == null) return;
+      const x = xScale(i);
+      const y = yVol(v);
+      const bH = H - PAD.b - y;
+      ctx.fillStyle = closes[i] >= opens[i] ? volUpColor : volDnColor;
+      ctx.fillRect(x - candleW/2, y, candleW, bH);
+    });
+
+    // Candles
+    closes.forEach((c, i) => {
+      if (c == null) return;
+      const x  = xScale(i);
+      const o  = opens[i], h = highs[i], l = lows[i];
+      const isUp = c >= o;
+      const col = isUp ? upColor : downColor;
+
+      // Wick
+      ctx.strokeStyle = col;
+      ctx.lineWidth = 1;
+      ctx.beginPath();
+      ctx.moveTo(x, yPrice(h));
+      ctx.lineTo(x, yPrice(l));
+      ctx.stroke();
+
+      // Body
+      const top    = yPrice(Math.max(o, c));
+      const bottom = yPrice(Math.min(o, c));
+      const bodyH  = Math.max(1, bottom - top);
+      ctx.fillStyle = isUp ? upColor : downColor;
+      ctx.fillRect(x - candleW/2, top, candleW, bodyH);
+    });
+
+    // Current price line
+    const cy = yPrice(lastClose);
+    const isLastUp = closes[n-1] >= closes[n-2];
+    ctx.strokeStyle = isLastUp ? upColor : downColor;
+    ctx.lineWidth = 1;
+    ctx.setLineDash([4, 3]);
+    ctx.beginPath(); ctx.moveTo(PAD.l, cy); ctx.lineTo(PAD.l + chartW, cy); ctx.stroke();
+    ctx.setLineDash([]);
+
+    // Price label on right axis
+    ctx.fillStyle = isLastUp ? upColor : downColor;
+    ctx.font = `bold 10px 'DM Mono', monospace`;
+    ctx.textAlign = 'left';
+    ctx.fillText(s + lastClose.toFixed(2), PAD.l + chartW + 4, cy + 4);
+
+  } catch(e) {
+    console.warn('Candle chart error:', e.message);
+    if (lbl) lbl.textContent = 'Grafik yüklenemedi';
+  }
+}
+
+// Getiri çubukları (1H, 1A, 3A, 6A, 1Y, YTD)
+async function loadD22Returns(ticker, currSymbol) {
+  const container = document.getElementById('d22_returns');
+  if (!container) return;
+
+  try {
+    const r = await fetch(`/api/ohlcv?ticker=${encodeURIComponent(ticker)}&period=1y`);
+    const d = await r.json();
+    if (d.error || !d.closes?.length) return;
+
+    const closes = d.closes;
+    const n = closes.length;
+    const last = closes[n-1];
+
+    const ret = (idx) => idx >= 0 && idx < n ? ((last - closes[idx]) / closes[idx] * 100).toFixed(1) : null;
+
+    const periods = [
+      {l:'1H',   v: ret(Math.max(0,n-5))},
+      {l:'1A',   v: ret(Math.max(0,n-21))},
+      {l:'3A',   v: ret(Math.max(0,n-63))},
+      {l:'6A',   v: ret(Math.max(0,n-126))},
+      {l:'1Y',   v: ret(0)},
+    ];
+
+    container.innerHTML = periods.map(p => {
+      if (p.v == null) return '';
+      const v = parseFloat(p.v);
+      const col = v > 0 ? 'var(--green)' : v < 0 ? 'var(--red)' : 'var(--muted2)';
+      const bg  = v > 0 ? 'var(--green2)' : v < 0 ? 'var(--red2)' : 'var(--bg3)';
+      return `<div style="background:${bg};border:1px solid ${col}30;border-radius:8px;padding:6px 12px;text-align:center;min-width:70px">
+        <div style="font-size:10px;color:var(--muted);margin-bottom:2px">${p.l}</div>
+        <div style="font-family:'DM Mono',monospace;font-size:13px;font-weight:500;color:${col}">${v>0?'+':''}${p.v}%</div>
+      </div>`;
+    }).join('');
+  } catch(e) { console.warn('Returns error:', e.message); }
+}
+
+// Çeyreklik finansal bar grafikler (Özet sekmesine eklenir)
+async function loadD22QuarterlyCharts() {
+  const ticker = d22_ticker;
+  if (!ticker) return;
+
+  // Try to get quarterly data from Yahoo Finance balanceSheetHistory
+  let gelirData = null;
+  try {
+    const r = await fetch(`/api/summary?ticker=${encodeURIComponent(ticker)}`);
+    const d = await r.json();
+    const sum = d.quoteSummary?.result?.[0];
+    const fd = sum?.financialData || {};
+    const ks = sum?.defaultKeyStatistics || {};
+
+    // Build quarterly chart section
+    const currency = d22_data?.meta?.currency || 'USD';
+    const s = currency === 'TRY' ? '₺' : '$';
+
+    const metrics = [
+      {l:'Toplam Gelir (TTM)',    v: fd.totalRevenue?.raw,       color:'#4a9eff'},
+      {l:'Brüt Kar (TTM)',       v: fd.grossProfits?.raw,        color:'#3fb87f'},
+      {l:'FAVÖK (TTM)',          v: fd.ebitda?.raw,              color:'#c9a84c'},
+      {l:'Net Kar (TTM)',        v: ks.netIncomeToCommon?.raw,   color:'#a855f7'},
+      {l:'Serbest NK (TTM)',     v: fd.freeCashflow?.raw,        color:'#e05555'},
+    ].filter(m => m.v != null);
+
+    if (metrics.length === 0) return;
+
+    const maxV = Math.max(...metrics.map(m => Math.abs(m.v)));
+
+    let chartHtml = `
+      <div class="card" style="margin-top:1rem">
+        <div class="card-t">Finansal Özet — TTM Göstergeler</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">`;
+
+    metrics.forEach(m => {
+      const pct = Math.abs(m.v) / maxV * 100;
+      const isNeg = m.v < 0;
+      chartHtml += `
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text)">${m.l}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:${isNeg?'var(--red)':'var(--muted2)'}">
+              ${isNeg?'-':''}${s}${fmtN(Math.abs(m.v))}
+            </span>
+          </div>
+          <div style="height:8px;background:var(--bg3);border-radius:999px;overflow:hidden">
+            <div style="height:100%;width:${pct.toFixed(1)}%;background:${isNeg?'var(--red)':m.color};border-radius:999px;transition:width .6s"></div>
+          </div>
+        </div>`;
+    });
+
+    chartHtml += `</div></div>`;
+
+    // Marjlar
+    chartHtml += `
+      <div class="card" style="margin-top:1rem">
+        <div class="card-t">Kar Marjları</div>
+        <div style="display:flex;flex-direction:column;gap:10px;margin-top:4px">`;
+
+    const margins = [
+      {l:'Brüt Marj',     v: fd.grossMargins?.raw,     color:'#3fb87f'},
+      {l:'Faaliyet Marjı',v: fd.operatingMargins?.raw, color:'#4a9eff'},
+      {l:'Net Marj',      v: fd.profitMargins?.raw,    color:'#c9a84c'},
+    ].filter(m => m.v != null);
+
+    margins.forEach(m => {
+      const pct = (m.v * 100).toFixed(1);
+      const barW = Math.min(100, Math.abs(m.v * 100));
+      const isNeg = m.v < 0;
+      chartHtml += `
+        <div>
+          <div style="display:flex;justify-content:space-between;margin-bottom:4px">
+            <span style="font-size:12px;color:var(--text)">${m.l}</span>
+            <span style="font-family:'DM Mono',monospace;font-size:12px;color:${isNeg?'var(--red)':m.color}">${pct}%</span>
+          </div>
+          <div style="height:8px;background:var(--bg3);border-radius:999px;overflow:hidden">
+            <div style="height:100%;width:${barW}%;background:${isNeg?'var(--red)':m.color};border-radius:999px;transition:width .6s"></div>
+          </div>
+        </div>`;
+    });
+
+    chartHtml += `</div></div>`;
+
+    // Append to ozet tab
+    const ozetContent = document.getElementById('dtab_content_ozet');
+    if (ozetContent) {
+      ozetContent.innerHTML += chartHtml;
+    }
+  } catch(e) { console.warn('Quarterly charts error:', e.message); }
+}
 
 function toggleTheme(){
   const light = document.body.classList.toggle('light');
