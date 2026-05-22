@@ -305,7 +305,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     </div>
     <div class="lh-ts" id="lh1_ts">—</div>
   </div>
-  <div class="fg"><label class="fl">Hisse Kodu</label><div class="ac-wrap"><input class="fi mono" id="m1t" autocomplete="off" oninput="acSearch(this,'m1t_ac')" onkeydown="acKey(event,'m1t_ac')" onblur="setTimeout(()=>acHide('m1t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(1)"><div class="ac-list" id="m1t_ac"></div></div></div>
+  <div class="fg"><label class="fl">Hisse Kodu</label>  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m1t','m1t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m1t" autocomplete="off" oninput="acSearch(this,'m1t_ac')" onkeydown="acKey(event,'m1t_ac')" onblur="setTimeout(()=>acHide('m1t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(1)"><div class="ac-list" id="m1t_ac"></div></div></div>
   <div class="chips"><span class="cl">Hızlı:</span>
     <span class="chip" onclick="sv('m1t','AAPL')">AAPL</span><span class="chip" onclick="sv('m1t','NVDA')">NVDA</span><span class="chip" onclick="sv('m1t','MSFT')">MSFT</span><span class="chip" onclick="sv('m1t','TSLA')">TSLA</span><span class="chip" onclick="sv('m1t','THYAO.IS')">THYAO</span><span class="chip" onclick="sv('m1t','ASELS.IS')">ASELS</span><span class="chip" onclick="sv('m1t','EREGL.IS')">EREGL</span>
   </div>
@@ -336,7 +344,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div class="lh-ts" id="lh2_ts">—</div>
   </div>
   <div class="fr2">
-    <div class="fg"><label class="fl">Hisse Kodu</label><div class="ac-wrap"><input class="fi mono" id="m2t" autocomplete="off" oninput="acSearch(this,'m2t_ac')" onkeydown="acKey(event,'m2t_ac')" onblur="setTimeout(()=>acHide('m2t_ac'),200)" placeholder="AAPL" maxlength="12"><div class="ac-list" id="m2t_ac"></div></div></div>
+    <div class="fg"><label class="fl">Hisse Kodu</label>  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m2t','m2t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m2t" autocomplete="off" oninput="acSearch(this,'m2t_ac')" onkeydown="acKey(event,'m2t_ac')" onblur="setTimeout(()=>acHide('m2t_ac'),200)" placeholder="AAPL" maxlength="12"><div class="ac-list" id="m2t_ac"></div></div></div>
     <div class="fg"><label class="fl">Trade Yönü</label><select class="fi" id="m2d"><option value="long">Long (Alış)</option><option value="short">Short (Satış)</option></select></div>
   </div>
   <div class="chips"><span class="cl">Örnek:</span>
@@ -367,7 +383,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div class="lh-ts" id="lh3_ts">—</div>
   </div>
   <div class="fr2">
-    <div class="fg"><label class="fl">Hisse Kodu</label><div class="ac-wrap"><input class="fi mono" id="m3t" autocomplete="off" oninput="acSearch(this,'m3t_ac')" onkeydown="acKey(event,'m3t_ac')" onblur="setTimeout(()=>acHide('m3t_ac'),200)" placeholder="AAPL" maxlength="12" onkeydown="if(event.key==='Enter')run(3)"><div class="ac-list" id="m3t_ac"></div></div></div>
+    <div class="fg"><label class="fl">Hisse Kodu</label>  <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m3t','m3t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m3t" autocomplete="off" oninput="acSearch(this,'m3t_ac')" onkeydown="acKey(event,'m3t_ac')" onblur="setTimeout(()=>acHide('m3t_ac'),200)" placeholder="AAPL" maxlength="12" onkeydown="if(event.key==='Enter')run(3)"><div class="ac-list" id="m3t_ac"></div></div></div>
     <div class="fg"><label class="fl">Dönem Sayısı</label><select class="fi" id="m3c"><option value="2">Son 2 bilanço</option><option value="4" selected>Son 4 bilanço</option><option value="8">Son 8 bilanço</option></select></div>
   </div>
   <div class="chips"><span class="cl">Örnek:</span>
@@ -526,7 +550,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div class="lh-ts" id="lh9_ts">—</div>
   </div>
   <div class="fg"><label class="fl">Hisse Kodu</label>
-    <div class="ac-wrap"><input class="fi mono" id="m9t" autocomplete="off" oninput="acSearch(this,'m9t_ac')" onkeydown="acKey(event,'m9t_ac')" onblur="setTimeout(()=>acHide('m9t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(9)"><div class="ac-list" id="m9t_ac"></div></div>
+      <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m9t','m9t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m9t" autocomplete="off" oninput="acSearch(this,'m9t_ac')" onkeydown="acKey(event,'m9t_ac')" onblur="setTimeout(()=>acHide('m9t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12" onkeydown="if(event.key==='Enter')run(9)"><div class="ac-list" id="m9t_ac"></div></div>
   </div>
   <div class="chips"><span class="cl">Hızlı:</span>
     <span class="chip" onclick="sv('m9t','AAPL')">AAPL</span>
@@ -571,7 +603,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
 
   <div class="fr2">
     <div class="fg"><label class="fl">Hisse Kodu</label>
-      <div class="ac-wrap"><input class="fi mono" id="m11t" autocomplete="off" oninput="acSearch(this,'m11t_ac')" onkeydown="acKey(event,'m11t_ac')" onblur="setTimeout(()=>acHide('m11t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12"><div class="ac-list" id="m11t_ac"></div></div>
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m11t','m11t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m11t" autocomplete="off" oninput="acSearch(this,'m11t_ac')" onkeydown="acKey(event,'m11t_ac')" onblur="setTimeout(()=>acHide('m11t_ac'),200)" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12"><div class="ac-list" id="m11t_ac"></div></div>
     </div>
     <div class="fg"><label class="fl">Test Periyodu</label>
       <select class="fi" id="m11per">
@@ -653,7 +693,15 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
 
   <div class="fr2">
     <div class="fg"><label class="fl">Hisse Kodu</label>
-      <div class="ac-wrap"><input class="fi mono" id="m13t" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12"
+        <div style="display:flex;gap:5px;flex-wrap:wrap;margin-bottom:.75rem;align-items:center">
+    <span style="font-size:10px;color:var(--muted);text-transform:uppercase;letter-spacing:.8px">Filtre:</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','BIST30')">BIST30</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','BIST50')">BIST50</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','BIST100')">BIST100</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','BIST')">BIST</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','NASDAQ')">NASDAQ</span>
+    <span class="chip" style="font-size:10px;padding:3px 8px" onclick="filterAcByIndex('m13t','m13t_ac','NYSE')">NYSE</span>
+  </div><div class="ac-wrap"><input class="fi mono" id="m13t" placeholder="AAPL, THYAO.IS, NVDA..." maxlength="12"
         autocomplete="off"
         oninput="acSearch(this,'m13t_ac')"
         onkeydown="acKey(event,'m13t_ac');if(event.key==='Enter'&&document.getElementById('m13t_ac').querySelectorAll('.ac-item').length===0)run(13)"
@@ -1132,6 +1180,13 @@ tbl td{padding:8px 8px;border-bottom:1px solid var(--border);white-space:nowrap}
     <div id="tab_usd"     class="radar-tab" onclick="setRadarList('usd')">ABD</div>
     <div id="tab_crypto"  class="radar-tab" onclick="setRadarList('crypto')">Kripto</div>
     <div id="tab_emtia"   class="radar-tab" onclick="setRadarList('emtia')">Emtia</div>
+    <div id="tab_europe"  class="radar-tab" onclick="setRadarList('europe')">Avrupa</div>
+    <div id="tab_asia"    class="radar-tab" onclick="setRadarList('asia')">Asya</div>
+    <div id="tab_gulf"    class="radar-tab" onclick="setRadarList('gulf')">Körfez</div>
+    <div id="tab_nikkei"  class="radar-tab" onclick="setRadarList('nikkei')">Japonya</div>
+    <div id="tab_kospi"   class="radar-tab" onclick="setRadarList('kospi')">G. Kore</div>
+    <div id="tab_nse"     class="radar-tab" onclick="setRadarList('nse')">Hindistan</div>
+    <div id="tab_b3"      class="radar-tab" onclick="setRadarList('b3')">Brezilya</div>
   </div>
 
   <!-- Column group tabs -->
@@ -2868,6 +2923,69 @@ const STOCKS = [
   {t:'EQIX',n:'Equinix',x:'NASDAQ'},
   {t:'O',n:'Realty Income',x:'NYSE'},
   {t:'SPG',n:'Simon Property',x:'NYSE'}
+,
+  {t:'AZN.L',n:'AstraZeneca',x:'FTSE'},
+  {t:'SHEL.L',n:'Shell',x:'FTSE'},
+  {t:'HSBA.L',n:'HSBC',x:'FTSE'},
+  {t:'BP.L',n:'BP',x:'FTSE'},
+  {t:'GSK.L',n:'GSK',x:'FTSE'},
+  {t:'ULVR.L',n:'Unilever',x:'FTSE'},
+  {t:'RIO.L',n:'Rio Tinto',x:'FTSE'},
+  {t:'VOD.L',n:'Vodafone',x:'FTSE'},
+  {t:'BA.L',n:'BAE Systems',x:'FTSE'},
+  {t:'SAP.DE',n:'SAP',x:'DAX'},
+  {t:'SIE.DE',n:'Siemens',x:'DAX'},
+  {t:'ALV.DE',n:'Allianz',x:'DAX'},
+  {t:'DTE.DE',n:'Deutsche Telekom',x:'DAX'},
+  {t:'BAYN.DE',n:'Bayer',x:'DAX'},
+  {t:'BMW.DE',n:'BMW',x:'DAX'},
+  {t:'MBG.DE',n:'Mercedes-Benz',x:'DAX'},
+  {t:'VOW3.DE',n:'Volkswagen',x:'DAX'},
+  {t:'ADS.DE',n:'Adidas',x:'DAX'},
+  {t:'MRK.DE',n:'Merck KGaA',x:'DAX'},
+  {t:'MC.PA',n:'LVMH',x:'CAC40'},
+  {t:'OR.PA',n:'L Oreal',x:'CAC40'},
+  {t:'SAN.PA',n:'Sanofi',x:'CAC40'},
+  {t:'TTE.PA',n:'TotalEnergies',x:'CAC40'},
+  {t:'BNP.PA',n:'BNP Paribas',x:'CAC40'},
+  {t:'AIR.PA',n:'Airbus',x:'CAC40'},
+  {t:'KER.PA',n:'Kering',x:'CAC40'},
+  {t:'7203.T',n:'Toyota',x:'Nikkei'},
+  {t:'6758.T',n:'Sony',x:'Nikkei'},
+  {t:'9984.T',n:'SoftBank',x:'Nikkei'},
+  {t:'7974.T',n:'Nintendo',x:'Nikkei'},
+  {t:'6861.T',n:'Keyence',x:'Nikkei'},
+  {t:'9432.T',n:'NTT',x:'Nikkei'},
+  {t:'0700.HK',n:'Tencent',x:'HKEX'},
+  {t:'9988.HK',n:'Alibaba HK',x:'HKEX'},
+  {t:'3690.HK',n:'Meituan',x:'HKEX'},
+  {t:'0941.HK',n:'China Mobile',x:'HKEX'},
+  {t:'005930.KS',n:'Samsung Electronics',x:'KOSPI'},
+  {t:'000660.KS',n:'SK Hynix',x:'KOSPI'},
+  {t:'035420.KS',n:'Naver',x:'KOSPI'},
+  {t:'035720.KS',n:'Kakao',x:'KOSPI'},
+  {t:'RELIANCE.NS',n:'Reliance Industries',x:'NSE'},
+  {t:'TCS.NS',n:'TCS',x:'NSE'},
+  {t:'INFY.NS',n:'Infosys',x:'NSE'},
+  {t:'HDFCBANK.NS',n:'HDFC Bank',x:'NSE'},
+  {t:'ICICIBANK.NS',n:'ICICI Bank',x:'NSE'},
+  {t:'WIPRO.NS',n:'Wipro',x:'NSE'},
+  {t:'2222.SR',n:'Saudi Aramco',x:'TADAWUL'},
+  {t:'1120.SR',n:'Al Rajhi Bank',x:'TADAWUL'},
+  {t:'2010.SR',n:'SABIC',x:'TADAWUL'},
+  {t:'7010.SR',n:'STC',x:'TADAWUL'},
+  {t:'FAB.AD',n:'First Abu Dhabi Bank',x:'ADX'},
+  {t:'ETISALAT.AD',n:'e& Emirates',x:'ADX'},
+  {t:'DIB.DU',n:'Dubai Islamic Bank',x:'DFM'},
+  {t:'EMAAR.DU',n:'Emaar Properties',x:'DFM'},
+  {t:'PETR4.SA',n:'Petrobras',x:'B3'},
+  {t:'VALE3.SA',n:'Vale',x:'B3'},
+  {t:'ITUB4.SA',n:'Itau Unibanco',x:'B3'},
+  {t:'BBDC4.SA',n:'Bradesco',x:'B3'},
+  {t:'BHP.AX',n:'BHP Group',x:'ASX'},
+  {t:'CBA.AX',n:'Commonwealth Bank',x:'ASX'},
+  {t:'CSL.AX',n:'CSL Limited',x:'ASX'},
+  {t:'RIO.AX',n:'Rio Tinto',x:'ASX'}
 ];
 
 let acIdx = -1;
@@ -4320,6 +4438,17 @@ const RADAR_LISTS = {
   usd:     ["AAPL", "MSFT", "NVDA", "GOOGL", "AMZN", "META", "TSLA", "BRK-B", "JPM", "JNJ", "V", "MA", "UNH", "XOM", "PG", "HD", "CVX", "MRK", "ABBV", "KO", "PEP", "COST", "AVGO", "AMD", "INTC", "NFLX", "ADBE", "CRM", "ORCL", "QCOM", "TXN", "NOW", "UBER", "SHOP", "COIN", "PLTR", "ARM", "TSM", "BABA", "NKE", "DIS", "BAC", "WMT", "GS", "MS", "PYPL", "SQ", "ABNB", "RIVN", "F", "GM", "GE", "BA", "CAT", "IBM", "CSCO", "MU", "AMAT", "SMCI", "DELL", "PANW", "CRWD", "NET", "DDOG", "SNOW", "LLY", "PFE", "MRNA", "AMGN", "NVO", "ISRG", "TMO", "BLK", "WFC", "C", "AXP", "FCX", "NEM", "NEE", "PLD", "AMT", "EQIX", "O", "SPG"],
   crypto:  ["BTC-USD","ETH-USD","BNB-USD","SOL-USD","XRP-USD","ADA-USD","AVAX-USD","DOT-USD","MATIC-USD","LINK-USD"],
   emtia:   ["GC=F","SI=F","CL=F","NG=F","HG=F","ZC=F","ZW=F","KC=F"],
+,
+  europe:  ["AZN.L", "SHEL.L", "HSBA.L", "BP.L", "GSK.L", "ULVR.L", "RIO.L", "VOD.L", "BA.L", "SAP.DE", "SIE.DE", "ALV.DE", "DTE.DE", "BAYN.DE", "BMW.DE", "MBG.DE", "VOW3.DE", "ADS.DE", "MRK.DE", "MC.PA", "OR.PA", "SAN.PA", "TTE.PA", "BNP.PA", "AIR.PA", "KER.PA"],
+  asia:    ["7203.T", "6758.T", "9984.T", "7974.T", "6861.T", "9432.T", "0700.HK", "9988.HK", "3690.HK", "0941.HK", "005930.KS", "000660.KS", "035420.KS", "035720.KS", "RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS", "WIPRO.NS"],
+  gulf:    ["2222.SR", "1120.SR", "2010.SR", "7010.SR", "FAB.AD", "ETISALAT.AD", "DIB.DU", "EMAAR.DU"],
+  ftse:    ["AZN.L", "SHEL.L", "HSBA.L", "BP.L", "GSK.L", "ULVR.L", "RIO.L", "VOD.L", "BA.L"],
+  dax:     ["SAP.DE", "SIE.DE", "ALV.DE", "DTE.DE", "BAYN.DE", "BMW.DE", "MBG.DE", "VOW3.DE", "ADS.DE", "MRK.DE"],
+  nikkei:  ["7203.T", "6758.T", "9984.T", "7974.T", "6861.T", "9432.T"],
+  kospi:   ["005930.KS", "000660.KS", "035420.KS", "035720.KS"],
+  nse:     ["RELIANCE.NS", "TCS.NS", "INFY.NS", "HDFCBANK.NS", "ICICIBANK.NS", "WIPRO.NS"],
+  b3:      ["PETR4.SA", "VALE3.SA", "ITUB4.SA", "BBDC4.SA"],
+  asx:     ["BHP.AX", "CBA.AX", "CSL.AX", "RIO.AX"]
 };
 
 const RADAR_COLS = {
@@ -5302,6 +5431,22 @@ async function loadD22QuarterlyCharts() {
       ozetContent.innerHTML += chartHtml;
     }
   } catch(e) { console.warn('Quarterly charts error:', e.message); }
+}
+
+
+function filterAcByIndex(inputId, listId, exchange) {
+  const list = document.getElementById(listId);
+  const input = document.getElementById(inputId);
+  if (!list) return;
+  const filtered = STOCKS.filter(s => {
+    if (exchange === 'BIST') return s.x.startsWith('BIST');
+    return s.x === exchange;
+  }).slice(0, 15);
+  if (filtered.length === 0) return;
+  list.innerHTML = filtered.map(s =>
+    '<div class="ac-item" data-ticker="'+s.t+'" onmousedown="acSelect(\'' + s.t + '\',\'' + inputId + '\',\'' + listId + '\')"><span class="ac-ticker">' + s.t.replace('.IS','') + '</span><span class="ac-name">' + s.n + '</span><span class="ac-exchange">' + s.x + '</span></div>'
+  ).join('');
+  list.classList.add('show');
 }
 
 function toggleTheme(){
