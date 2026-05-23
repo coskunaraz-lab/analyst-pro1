@@ -4040,27 +4040,6 @@ async function m17() {
       <div style="overflow-x:auto"><table style="width:100%;border-collapse:collapse;font-size:13px">
       <thead><tr>${['#','Hisse','Şirket','Skor','F/K','ROE','Büyüme','Marj','Piy.Değ.'].map(h=>`<th style="text-align:left;padding:7px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-size:11px;font-weight:400;white-space:nowrap">${h}</th>`).join('')}</tr></thead>
       <tbody>`;
-    (j.hisseler||[]).filter(h=>h.sembol).forEach((h,i)=>{
-      const scoreColor = h.skor>=80?'var(--green)':h.skor>=65?'var(--gold2)':'var(--muted2)';
-      rc17_html_ref.push(`<tr onclick="toggleDetails17(${i})" style="cursor:pointer">
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);color:var(--muted);font-family:'DM Mono',monospace">${i+1}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--gold2);font-weight:500">${h.sembol}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);color:var(--text);font-size:12px">${h.isim}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border)"><span style="font-family:'DM Mono',monospace;font-size:13px;color:${scoreColor};font-weight:500">${h.skor}</span></td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--text)">${h.fk||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--green)">${h.roe||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--green)">${h.buyume||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--text)">${h.marj||'—'}</td>
-        <td style="padding:8px 10px;border-bottom:1px solid var(--border);font-family:'DM Mono',monospace;color:var(--muted2);font-size:12px">${h.pd||'—'}</td>
-      </tr>
-      <tr id="det17_${i}" style="display:none">
-        <td colspan="9" style="padding:10px 14px;background:var(--bg3);border-bottom:1px solid var(--border)">
-          <div style="font-size:13px;color:var(--text);margin-bottom:5px">${h.neden}</div>
-          <div style="font-size:12px;color:var(--red)">⚠ ${h.risk}</div>
-        </td>
-      </tr>`);
-    });
-
     // build table without closures
     let tableRows = '';
     (j.hisseler||[]).filter(h=>h.sembol).forEach((hisse,i)=>{
